@@ -9,11 +9,8 @@ export default function Home() {
       </div>
 
       <div className="relative flex flex-col mb-16 place-items-center">
-        <span>
-          시각화 활동을 좋아하는 개발자입니다. 정리하는 것을 좋아하며 깔끔한
-          코드, 디자인을 선호합니다.
-        </span>
-        <span>주제별 게시글을 확인할 수 있습니다.</span>
+        <span>결과를 확인할 수 있는 활동을 좋아하는 개발자입니다.</span>
+        <span>가독성이 높은 코드, 단순하지만 깔끔한 디자인을 선호합니다.</span>
         {/*TODO: github logo & link 넣기*/}
         <span className="my-4">logo</span>
       </div>
