@@ -7,5 +7,9 @@ interface Props {
 export function Mdx({ code }: Props) {
   const MDXComponent = useMDXComponent(code);
 
-  return <MDXComponent />;
+  return (
+    <div className="prose max-w-none">
+      <MDXComponent />
+    </div>
+  );
 }

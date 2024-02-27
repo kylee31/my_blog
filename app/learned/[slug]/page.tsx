@@ -3,6 +3,7 @@ import { allLearneds } from "contentlayer/generated";
 import Layout from "@/libs/Layout";
 import { Props } from "@/types/postType";
 import { Mdx } from "@/components/Mdx";
+import Link from "next/link";
 
 export default async function DocPage({ params }: Props) {
   const post = await getDocFromParams({ params });
@@ -13,14 +14,12 @@ export default async function DocPage({ params }: Props) {
 
   return (
     <Layout>
-      <div className="w-full mt-3">
-        <div className="mb-10">
-          <h1 className="text-blue-400 font-black text-3xl inline-block mr-4">
+      <div className="w-full mt-3 px-8">
+        <div className="mb-10 flex justify-between">
+          <h1 className="text-black font-black text-3xl inline-block mr-4">
             {post.title}
           </h1>
-          <time className="text-gray-500 text-sm mt-2 ml-auto">
-            {post.date}
-          </time>
+          <Link href="/learned">◀</Link>
         </div>
         <Mdx code={post.body.code} />
       </div>
@@ -39,17 +38,3 @@ export async function generateStaticParams() {
     slug: doc.slug,
   }));
 }
-
-// export async function generateMetadata({ params }: Props) {
-//   const doc = await getDocFromParams({ params });
-
-//   if (!doc) {
-//     return {};
-//   }
-
-//   return {
-//     title: doc.title,
-//     description: doc.description,
-//     path: `/learned/${doc.slug}`,
-//   };
-// }
