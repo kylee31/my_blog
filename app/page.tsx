@@ -1,4 +1,5 @@
 import { cate } from "@/data/datas";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -8,11 +9,22 @@ export default function Home() {
         <h1 className="mb-16 text-4xl font-extrabold text-black">{`231's Blog`}</h1>
       </div>
 
-      <div className="relative flex flex-col mb-16 place-items-center">
+      <div className="relative flex flex-col mb-16 place-items-center text-center">
         <span>결과를 확인할 수 있는 활동을 좋아하는 개발자입니다.</span>
         <span>가독성이 높은 코드, 단순하지만 깔끔한 디자인을 선호합니다.</span>
         {/*TODO: github logo & link 넣기*/}
-        <span className="my-4">logo</span>
+        <div className="flex">
+          <a
+            className="mt-5 mr-3"
+            href="https://velog.io/@kylee31/posts"
+            target="_blank"
+          >
+            <Image src="/velog.png" alt="no img" width={25} height={25} />
+          </a>
+          <a className="mt-5" href="https://github.com/kylee31" target="_blank">
+            <Image src="/github.png" alt="no img" width={25} height={25} />
+          </a>
+        </div>
       </div>
 
       <div className="grid text-center lg:max-w-5xl lg:w-2/3 lg:mb-0 lg:grid-cols-3 lg:text-left">
