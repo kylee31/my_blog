@@ -8,10 +8,10 @@ export default function Cate() {
     <Layout>
       <div className="w-full flex flex-col">
         <div className="mb-10">
-          <span className="text-2xl font-black mr-3 text-blue-500">
+          <span className="text-2xl font-black mr-3 text-gray-700">
             Projects
           </span>
-          <span className="text-xs font-bold text-blue-300">
+          <span className="text-xs font-bold text-gray-500">
             프로젝트 기획 및 구현 과정
           </span>
         </div>

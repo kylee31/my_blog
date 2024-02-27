@@ -21,7 +21,7 @@ export const Learned = defineDocumentType(() => ({
 
 export const Projects = defineDocumentType(() => ({
     name: "Projects",
-    filePathPattern: `projects/**/*.mdx`,
+    filePathPattern: `projects/*.mdx`,
     contentType: "mdx",
     fields: {
         title: { type: "string", required: true },

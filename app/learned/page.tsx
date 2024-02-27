@@ -7,10 +7,10 @@ export default function Learned() {
     <Layout>
       <div className="w-full flex flex-col">
         <div className="mb-10">
-          <span className="text-2xl font-black mr-3 text-blue-500">
+          <span className="text-2xl font-black mr-3 text-gray-700">
             Learned
           </span>
-          <span className="text-xs font-bold text-blue-300">개념 정리</span>
+          <span className="text-xs font-bold text-gray-500">개념 정리</span>
         </div>
         {allLearneds.map((learned, idx) => {
           const { slug, title, date, description } = learned;

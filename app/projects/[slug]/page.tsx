@@ -10,10 +10,10 @@ export default function Project({ params }: Props) {
     <Layout>
       <div className="w-full flex flex-col">
         <div className="mb-10">
-          <span className="text-2xl font-black mr-3 text-blue-800">
+          <span className="text-2xl font-black mr-3 text-gray-700">
             Projects/ {info?.title}
           </span>
-          <span className="text-xs font-bold text-blue-400">{info?.desc}</span>
+          <span className="text-xs font-bold text-gray-500">{info?.desc}</span>
         </div>
         {allProjects
           .filter((doc) => doc.cate.includes(params.slug))
