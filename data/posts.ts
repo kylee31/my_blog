@@ -1,24 +1,19 @@
-import { myBlogType } from "@/types/postType";
+import { myProjectType } from "@/types/postType";
 
-export const myBlog:myBlogType[]=[
+export const myProject:myProjectType[]=[
     {
-    title:"my blog",
-    link:"/projects/myblog"
+    title:"My Blog",
+    slug:"myblog",
+    desc:"공부 내용을 정리하는 기록장"
 },
 {
-    title:"my blog",
-    link:"/projects/myblog"
+    title:"Movie Diary",
+    slug:"moviediary",
+    desc:"공부 내용을 정리하는 기록장"
 },
 {
-    title:"my blog",
-    link:"/projects/myblog"
-},
-{
-    title:"my blog",
-    link:"/projects/myblog"
-},
-{
-    title:"my blog",
-    link:"/projects/myblog"
+    title:"Book Mark",
+    slug:"bookmark",
+    desc:"공부 내용을 정리하는 기록장"
 }
 ]

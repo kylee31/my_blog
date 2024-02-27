@@ -1,6 +1,7 @@
-export type myBlogType={
+export type myProjectType={
     title:string,
-    link:string
+    slug:string,
+    desc:string
 }
 
 export type Props={

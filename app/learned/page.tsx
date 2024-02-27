@@ -1,5 +1,5 @@
 import { allLearneds } from "@/.contentlayer/generated";
-import Layout from "@/libs/Layout";
+import Layout from "@/components/Layout";
 import Link from "next/link";
 
 export default function Learned() {

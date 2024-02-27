@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { allLearneds } from "contentlayer/generated";
+import { allProjects } from "contentlayer/generated";
 import Layout from "@/components/Layout";
 import { Props } from "@/types/postType";
 import { Mdx } from "@/components/Mdx";
@@ -19,7 +19,7 @@ export default async function DocPage({ params }: Props) {
           <h1 className="text-black font-black text-3xl inline-block mr-4">
             {post.title}
           </h1>
-          <Link href="/learned">◀</Link>
+          <Link href="/projects/">◀</Link>
         </div>
         <Mdx code={post.body.code} />
       </div>
@@ -28,7 +28,7 @@ export default async function DocPage({ params }: Props) {
 }
 
 async function getDocFromParams({ params }: Props) {
-  const doc = allLearneds.find((doc) => doc.slug === params.slug);
+  const doc = allProjects.find((doc) => doc.slug === params.slug);
 
   return doc ?? null;
 }

@@ -19,9 +19,27 @@ export const Learned = defineDocumentType(() => ({
     },
 }));
 
+export const Projects = defineDocumentType(() => ({
+    name: "Projects",
+    filePathPattern: `projects/*.mdx`,
+    contentType: "mdx",
+    fields: {
+        title: { type: "string", required: true },
+        date: { type: "string", required: true },
+        description: { type: "string", required: true },
+        cate: { type: "string", required: true }
+    },
+    computedFields: {
+        slug: {
+            type: "string",
+            resolve: (post) => post._raw.sourceFileName.replace(".mdx", ""),
+        },
+    },
+}))
+
 export default makeSource({
     contentDirPath: "posts",
-    documentTypes: [Learned],
+    documentTypes: [Learned, Projects],
     mdx: {
         rehypePlugins: [
             rehypeCodeTitles,
