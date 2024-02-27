@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import { allProjects } from "contentlayer/generated";
 import Layout from "@/components/Layout";
-import { Props } from "@/types/postType";
+import { cateProps } from "@/types/postType";
 import { Mdx } from "@/components/Mdx";
 import Link from "next/link";
 
-export default async function DocPage({ params }: Props) {
+export default async function DocPage({ params }: cateProps) {
   const post = await getDocFromParams({ params });
 
   if (!post) {
@@ -19,7 +19,7 @@ export default async function DocPage({ params }: Props) {
           <h1 className="text-black font-black text-3xl inline-block mr-4">
             {post.title}
           </h1>
-          <Link href="/projects/">◀</Link>
+          {/* <Link href={`/projects/${params.slug}`}>◀</Link> */}
         </div>
         <Mdx code={post.body.code} />
       </div>
@@ -27,8 +27,9 @@ export default async function DocPage({ params }: Props) {
   );
 }
 
-async function getDocFromParams({ params }: Props) {
-  const doc = allProjects.find((doc) => doc.slug === params.slug);
+//커스텀 훅
+async function getDocFromParams({ params }: cateProps) {
+  const doc = allProjects.find((doc) => doc.slug === params.cate);
 
   return doc ?? null;
 }

@@ -10,3 +10,9 @@ export type Props={
     };
   }
   
+export interface cateProps extends Props{
+  params:{
+    slug:string
+    cate:string
+  }
+}

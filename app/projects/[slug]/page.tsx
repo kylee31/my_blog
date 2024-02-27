@@ -11,7 +11,7 @@ export default function Project({ params }: Props) {
       <div className="w-full flex flex-col">
         <div className="mb-10">
           <span className="text-2xl font-black mr-3 text-blue-800">
-            {info?.title}
+            Projects/ {info?.title}
           </span>
           <span className="text-xs font-bold text-blue-400">{info?.desc}</span>
         </div>
