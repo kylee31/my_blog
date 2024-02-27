@@ -3,14 +3,15 @@
 @tailwind utilities;
 
 :root {
-  
 }
 
 body {
   color: gray;
-  background: white
+  background-color: white;
 }
 
 @layer utilities {
-  
+}
+
+@layer base {
 }

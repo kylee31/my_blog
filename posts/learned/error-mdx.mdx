@@ -1,0 +1,21 @@
+---
+title: Error, mdx 렌더링 오류
+date: 2024-02-26
+description: 블로그 프로젝트 중 mdx code 부분 화면 출력 시 제대로 렌더링 되지 않는 현상 발생
+---
+
+> MDX란 markdown 문법과 JSX 문법이 합쳐진 문법이다.
+> 해당 형식은 markdown 문법으로 작성하고 빌드 시 JSX로 해석되어 최종적으로 html 요소로 변환된다.
+
+즉 지금 내가 작성하고 있는 내용(인용문, 리스트 등)이 markdown 요소가 적용된 html 요소이므로 요소에 맞게 보여져야 하는데,
+텍스트만 출력되는 현상이 나타나고 있다.
+
+html 요소가 제대로 생성되지만 화면엔 나타나지 않으므로 **MDX 렌더링**이 문제가 아닌 것 같다.
+
+=> CSS(typograhpy)가 제대로 적용되지 않아서 발생한 문제! 패키지 다운로드하고 mdx 컴포넌트에 적용하였다.
+
+Node version에 대한 mjs 파일 지원
+(next.config.mjs는 20.09.0 버전에서 지원되지 않는다. 따라서 next.config.js로 변경)
+
+- [tailwind prose max width 설정](https://stackoverflow.com/questions/74914969/override-65ch-max-width-in-tailwind-css-typography)
+  typograhpy plugin 사용 가능 (max-w-none)

@@ -1,0 +1,99 @@
+---
+title: My Blog 초기 기획
+date: 2024-02-25
+description: 블로그 구현에 사용된 프레임워크 및 라이브러리, 참고 글 정리
+cate: myblog
+---
+
+> mdx로 작성하는 개인 기록용 블로그 (Next.js(13) 및 tailwind CSS 연습)
+
+### ⏳구현 기간
+
+- 2024.02.25~2024.02.27
+
+### 🔗사용 기술
+
+- **[개발 환경]** Node.js 20.9.0, yarn 1.21.21, VScode 1.84.1
+- **[구현]** typescript, Next.js 13, tailwind CSS(typography), MDX
+- **[배포]** Vercel
+
+### 💡 기술 스택 선정 이유
+
+**[typscript]** 헤더 카테고리 데이터와 게시글 카테고리 데이터에 대한 type 정의 위해 선정<br/>
+**[Next.js 13]** app router 기능 사용, 이후 SEO 최적화를 위해 SSR 렌더링이 가능한 기술 스택 선정<br/>
+**[tailwind CSS]** CSS-in-JS로 이전 프로젝트까지는 styled-components를 사용하였으나 불필요하게
+컴포넌트 단위로 작성하는 단점이 가장 불편했다. 또한 CSR 환경을 바탕으로 개발되어 스타일 정의가 클라이언트 런타임에서
+이뤄지기 때문에 Next.js는 tailwind CSS를 추천한다고 한다.<br/>
+**[MDX]** markdown 문법과 JSX가 합쳐진 형식으로, 정적 컨텐츠를 컴포넌트화시키는 특성을 가지고 있어 SSG를 지원하는
+프레임워크(Next.js, Gatsby-서버없이 오로지 정적 사이트 생성위해 사용하는 프레임워크)에서
+MDX를 위한 [플러그인(Next.js)](https://nextjs.org/docs/pages/building-your-application/configuring/mdx)이
+잘 지원되고 있다. 해당 프로젝트에서는 contentlayer 라이브러리를 사용하여 더욱 편리하게 MDX를 렌더링한다.<br/>
+**[Vercel]** Next.js 개발한 Vercel에서 배포(Github과 연동을 통한)를 지원해주므로 선정<br/>
+
+➕ [[CSS] 왜 Next.js는 tailwind를 추천할까?](https://velog.io/@shinhw371/CSS-why-Nextjs-recommand-Tailwind)<br/>
+
+<hr />
+
+기술 블로그로 velog를 사용하고 있으나, 주로 오류 해결을 위해 두서없이 작성한 내용이라 대부분의 글들을 비공개로 돌려두었다.
+또 CS 지식을 노트에 정리하고 있어 정리에 필요한 이미지 등을 모두 옮겨 적을 수 없어
+구현한 프로젝트, 학습한 프로그래밍 언어 개념, 알고리즘에 대해 온라인에서 깔끔히 정리할 방법이 없는지 고민만 하고 있었다.
+그러던 중 며칠 전 3월 항해99 취업 리부트 코스에 참여하기로 결정하면서 코스 시작 전 반드시 정리해야겠다고 결심했다.
+
+기술 스택 선정 이유는 위와 같다. 최근 스타트업에서 Next.js로 근무한 경험을 바탕으로 Next.js로 간단한 프로젝트를 구현했다. 해당 프로젝트는 Next.js를
+사용하여 기획부터 AWS EC2 배포까지 과정을 경험하기 위한 프로젝트였다. 특히 13버전을 사용하며 app router의 편리성을 경험해보았고,
+Next.js가 React 프레임워크로 SSR이 가능하다는 점(이로 인해 SEO가 용이하다는 점)이 큰 장점이였다. 블로그는 주로 정적인
+콘텐츠를 담기 때문에 서버 측에서 렌더링하여 클라이언트 측으로 전송해주는 Next.js를 선택하였다.
+
+```bash
+yarn create next-app
+```
+
+create next-app으로 프로젝트 생성. 생성 과정에서 app router 사용 여부, tailwind 사용 여부 등을 설정한다.
+
+```bash
+yarn add contentlayer next-contentlayer
+```
+
+contentlayer를 사용하여 MDX 렌더링하기 위해 해당 라이브러리 설치, next.config.js에 contentlayer를 연결해주고
+tailwind.config.ts와 tsconfig.json에도 [추가 설정](https://blog.openreplay.com/build-a-mdx-powered-blog-with-contentlayer-and-next/)이 필요하다.<br/>
+❗ 이 과정에서 typography 플러그인 설정(MDX 요소에 대한 tailwind CSS 적용)을 해주지 않아 오류 해결에 시간을 썼다..
+
+이렇게 프로젝트 환경 설정이 마무리되었다!
+
+이후 구현할(하고 싶은) UX/UI는 다음과 같다. (중요 기능 ⭐표시)
+
+1. ⭐게시글 페이지(mdx 렌더링 구현)
+2. ⭐프로젝트 카테고리 분리
+3. 댓글 기능
+4. 페이지 상위 이동 버튼
+5. 목록 nav
+6. main 페이지 레이아웃 및 디자인 수정
+7. 페이지 정렬을 위한 mdx 정보 추가
+8. ...(추가 중)
+
+🔽 현재 UI(2024.02.27)
+
+![](/projects/ver1.gif)
+
+👩‍💻💬 익숙하지 않은 tailwind CSS와 MDX 렌더링 구현으로 블로그 생성부터 기본 기능 구현까지 대략 2~3일정도 걸렸다.
+tailwind는 Tailwind CSS IntelliSense 확장 프로그램으로 프로그램 구현 중반부터는 편리했지만 기본적으로 알고있던 CSS를 [tailwind CSS Document](https://tailwindcss.com/docs/installation)
+에서 찾아서 작성하느라 시간이 걸렸다. 렌더링 관련 차이점은 크게 느껴지지 않았지만 가장 크게 체감할 수 있었던 부분은
+컴포넌트명을 고민하지 않아도 된다는 점이였다. 물론 못생긴 코드(익숙하지 않다보니 더욱 못생긴)..라는 단점도 존재하고,
+러닝 커브가 조금 높다고 느껴졌다.
+
+또 MDX 렌더링 과정에서 헤매었을 뿐, velog와 readme 작성으로 익혀둔 markdown 문법으로 서버없이 블로그를
+구현할 수 있어 편리했다.
+
+블로그 구현하며 [miryang님의 블로그](https://miryang.dev/blog/build-blog-with-nextjs)와
+[github](https://github.com/MiryangJung/miryang.dev/blob/main/app/blog/%5Bslug%5D/components/mdx.tsx)에서
+정말 많은 도움을 받았다! 역시 다른 코드 읽는 건 성장에 큰 도움을 준다..!
+
+<hr />
+
+### 📌참고
+
+- [Next.js 블로그 개발기](https://velog.io/@yooji0415/Next.js-%EB%B8%94%EB%A1%9C%EA%B7%B8-%EA%B0%9C%EB%B0%9C%EA%B8%B0)
+- [Next.js로 나만의 블로그 만들기 with 정적 생성](https://miryang.dev/blog/build-blog-with-nextjs)
+- [MiryangJung github](https://github.com/MiryangJung/miryang.dev/blob/main/app/blog/%5Bslug%5D/components/mdx.tsx)
+- [Making Blog(mdx) with Next.js, contentlayer](https://blog.openreplay.com/build-a-mdx-powered-blog-with-contentlayer-and-next/)
+- [gifmaker](https://gifmaker.me/video-to-gif/)
