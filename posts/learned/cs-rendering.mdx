@@ -1,0 +1,72 @@
+---
+title: CSR, SSR, SSG 정리
+date: 2024-02-26
+description: React와 Next.js로 정리해보는 렌더링 방식
+---
+
+> React와 Next.js를 사용하며 이해한 렌더링 방식에 대해 정리해보자.
+
+❓ **SSG**란, Static Site Generation로 **빌드 진행 시 작성한 각 페이지들에 대해 문서를 static한 파일로 생성**한다.
+해당 페이지에 대한 요청이 발생하면 처음부터 페이지를 다시 생성하는 것이 아닌
+이미 만들어진 페이지를 반환하는 형태로 동작한다. (SSR은 서버 측에서 html을 동적으로 렌더링한다.
+따라서 페이지를 요청하면 처음부터 페이지를 다시 생성하게 된다.)
+
+❗ 헷갈리지 말자. **SSG에서 Static이란 HTML이 정적(빌드 시 모두 생성 완료되므로)이라는 얘기일 뿐
+페이지가 정적이라는 뜻이 아니다** 데이터베이스나 외부 서비스와의 상호작용 없이 서버에서 바로 제공되는 페이지가 정적 페이지.
+
+잠깐 다른 얘기를 하자면, MDX를 활용한 Next.js로 블로그 만들기는 SSG 방식을 사용하기 알맞는 프로젝트이다.<br/>
+(➕ Next.js 13에서 SSR, SSG 구현하는 방법은 [해당 글](https://haesoo9410.tistory.com/404)을
+참고해보자.)
+
+Next.js 13 이전에는 pages 라우터 방식, 13부터 app router 기능과 RSC 개념이 도입되었다.
+서버 컴포넌트와 클라이언트 컴포넌트로 나뉘며 기존(13 이전) 컴포넌트였던 클라이언트 컴포넌트가 아닌
+서버 컴포넌트가 default가 되었다. 클라이언트 컴포넌트로 사용하려면 "use client"를 맨 앞에 작성해야 한다.
+클라이언트 컴포넌트는 클라이언트 측에서도 렌더링되는 컴포넌트이다.
+
+결국 Next.js에서 SSR, SSG를 구현하려면 getStaticProps()나 getServerSideProps()를 사용했어야 했다.
+13 이후에 모든 컴포넌트가 기본적으로 서버에서만 렌더링 된다. 서버 컴포넌트가 기본값이므로 fetch를 확장하여 위의 메서드를
+아래와 같이 옵션으로 선택할 수 있게 되었다. (클라이언트 측 렌더링이 필요하면 "use client"로 명시해주어야 한다.)
+
+```jsx:▶DataFetch.jsx
+export const DataFetch = async() => {
+  //SSR
+  const dynamicDataFetch = await fetch('/api/test/server', { cache: 'no-store' });
+  //SSG
+  const staticDataFetch = await fetch('/api/test/static', { cache: 'force-cache' });
+}
+```
+
+<hr />
+
+👩‍💻💬 Next.js를 완전히 이해하지 못한 채 "travel plan 프로젝트"를 진행했고, 현재 블로그를 구현하면서 Next.js에 대해
+놓친 부분을 발견했다. 기존 React 프로젝트에서 사용하던 axios를 Next.js 13에서도 사용하였는데, 외부 라이브러리를 사용하여
+데이터를 캐싱하는 경우에는 직접 설정해주어야 했다.
+
+📝 [Next.js 13 캐싱 문제](https://velog.io/@myeongjae-kim/Next.js-v13-App-Router%EB%A1%9C-%EC%A0%9C%ED%92%88-%EB%A7%8C%EB%93%A4%EA%B8%B0-fetch%EB%A5%BC-%EB%8B%A4%EB%A3%A8%EB%8A%94-%EA%B8%B0%EC%88%A0)<br/>
+_App Router 문서를 읽어보니 Next.js 서버쪽에서 캐싱 관련 기능을 fetch를 확장해서 제공하고 있고,
+fetch가 아닌 다른 라이브러리를 사용한다면 직접 캐싱 관련 설정을 해주어야 합니다._
+
+즉, SSR과 SSG로 구현하려면 fetch(Next 측에서 확장한)를 사용하여 옵션을 주어야 했다.
+
+현재 내가 이해한 바는 다음과 같다. CSR, SSR, SSG와 같은 용어는 HTML을 만드는 시기와 방법, 클라이언트 측 렌더링
+여부에 차이점이 존재한다.
+
+- CSR은 서버에서 모든 파일을 받고, 이후 클라이언트 측에서 HTML과 자바스크립트를 렌더링하고 출력한다.<br/>
+  (_React Hook은 주로 클라이언트 측 렌더링을 위해 설계되었지만, 일부 훅은 SSR과 함께 사용될 수도 있습니다._)
+- SSR은 서버 측에서 HTML을 렌더링하고 화면에 출력, 클라이언트 측에서 자바스크립트를 렌더링하여 동기화,
+  이후 동적인 상호작용이 가능하다. 매 요청마다 HTML을 서버 측에서 생성하는 것이다.
+- SSG는 빌드 시에 HTML을 완성하여 제공한다. 그렇기 때문에 정적인 콘텐츠에 적합하다. (정적 콘텐츠에 적합하다는 것이지
+  페이지가 정적이라는 뜻은 아니다.)
+
+👩‍💻❓ 그렇다면 axios를 적용한 컴포넌트는 CSR 형태로 클라이언트 측에서 데이터를 fetching하고 캐싱하고 있나..?
+그런듯하다.
+
+<hr />
+
+### 📌참고
+
+- [Next 13 Data Fetch - 1](https://velog.io/@qqww08/next-13-%EC%95%84%EB%8A%94-%EB%A7%8C%ED%81%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-1-with.-data-fetching)
+- [Next.js v13 App Router로 제품 만들기: 이제 더 이상 Axios를 쓰지 않기로 했습니다](https://velog.io/@myeongjae-kim/Next.js-v13-App-Router%EB%A1%9C-%EC%A0%9C%ED%92%88-%EB%A7%8C%EB%93%A4%EA%B8%B0-fetch%EB%A5%BC-%EB%8B%A4%EB%A3%A8%EB%8A%94-%EA%B8%B0%EC%88%A0)
+- [Next.js Rendering Strategies: SSR, SSG, and ISR Compared](https://hybridheroes.de/blog/2023-05-31-next-js-rendering-strategies/)
+- [Next.js 13 으로 알아보는 FE 렌더링 방식 (SSR vs RSC)](https://haesoo9410.tistory.com/404)
+- [NextJS버전 별 특징(13 이전, 13, 14)](https://velog.io/@dlehddnr99/NextJS-%EB%B2%84%EC%A0%84-%EB%B3%84-%EC%B0%A8%EC%9D%B4%EC%A0%90-13-%EC%9D%B4%EC%A0%84-13-14)
