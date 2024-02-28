@@ -1,10 +1,12 @@
 ---
-title: CSR, SSR, SSG 정리
+title: CS, 렌더링 방식(CSR, SSR, SSG)
 date: 2024-02-26
 description: React와 Next.js로 정리해보는 렌더링 방식
 ---
 
 > React와 Next.js를 사용하며 이해한 렌더링 방식에 대해 정리해보자.
+
+![](/learned/cs-rendering-1.jpg)
 
 ❓ **SSG**란, Static Site Generation로 **빌드 진행 시 작성한 각 페이지들에 대해 문서를 static한 파일로 생성**한다.
 해당 페이지에 대한 요청이 발생하면 처음부터 페이지를 다시 생성하는 것이 아닌
@@ -58,15 +60,15 @@ fetch가 아닌 다른 라이브러리를 사용한다면 직접 캐싱 관련 �
 - SSG는 빌드 시에 HTML을 완성하여 제공한다. 그렇기 때문에 정적인 콘텐츠에 적합하다. (정적 콘텐츠에 적합하다는 것이지
   페이지가 정적이라는 뜻은 아니다.)
 
-👩‍💻❓ 그렇다면 axios를 적용한 컴포넌트는 CSR 형태로 클라이언트 측에서 데이터를 fetching하고 캐싱하고 있나..?
-그런듯하다.
+👩‍💻❓ 그렇다면 이전 Next.js 프로젝트에서 axios를 적용한 컴포넌트는 CSR 형태로 클라이언트 측에서 데이터를 fetching하고
+캐싱하고 있나..? 그런듯하다.
 
 <hr />
 
 ### 📌참고
 
+- ⭐[Next.js 13 으로 알아보는 FE 렌더링 방식 (SSR vs RSC)](https://haesoo9410.tistory.com/404)
 - [Next 13 Data Fetch - 1](https://velog.io/@qqww08/next-13-%EC%95%84%EB%8A%94-%EB%A7%8C%ED%81%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-1-with.-data-fetching)
 - [Next.js v13 App Router로 제품 만들기: 이제 더 이상 Axios를 쓰지 않기로 했습니다](https://velog.io/@myeongjae-kim/Next.js-v13-App-Router%EB%A1%9C-%EC%A0%9C%ED%92%88-%EB%A7%8C%EB%93%A4%EA%B8%B0-fetch%EB%A5%BC-%EB%8B%A4%EB%A3%A8%EB%8A%94-%EA%B8%B0%EC%88%A0)
 - [Next.js Rendering Strategies: SSR, SSG, and ISR Compared](https://hybridheroes.de/blog/2023-05-31-next-js-rendering-strategies/)
-- [Next.js 13 으로 알아보는 FE 렌더링 방식 (SSR vs RSC)](https://haesoo9410.tistory.com/404)
 - [NextJS버전 별 특징(13 이전, 13, 14)](https://velog.io/@dlehddnr99/NextJS-%EB%B2%84%EC%A0%84-%EB%B3%84-%EC%B0%A8%EC%9D%B4%EC%A0%90-13-%EC%9D%B4%EC%A0%84-13-14)
