@@ -16,8 +16,8 @@ export const myProject:myProjectType[]=[
     slug:"bookmark",
     desc:"카테고리 및 메모 내용을 저장하는 웹 페이지"
 },{
-    title:"Travle Plan",
-    slug:"travleplan",
+    title:"Travel Plan",
+    slug:"travelplan",
     desc:"지도 API, 지역축제 목록 API를 사용한 여행 계획 웹 서비스"
 }
 ]
