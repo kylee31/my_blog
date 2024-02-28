@@ -3,13 +3,14 @@ import Layout from "@/components/Layout";
 import { myProject } from "@/data/posts";
 import { Props } from "@/types/postType";
 import Link from "next/link";
+import "../../../styles/pages.css";
 
 export default function Project({ params }: Props) {
   const info = myProject.find((doc) => doc.slug === params.slug);
   return (
     <Layout>
       <div className="w-full flex flex-col">
-        <div className="mb-10">
+        <div className="mb-10 cate-title">
           <span className="text-2xl font-black mr-3 text-gray-700">
             Projects/ {info?.title}
           </span>

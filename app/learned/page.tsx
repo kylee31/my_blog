@@ -1,12 +1,13 @@
 import { allLearneds } from "@/.contentlayer/generated";
 import Layout from "@/components/Layout";
 import Link from "next/link";
+import "../../styles/pages.css";
 
 export default function Learned() {
   return (
     <Layout>
       <div className="w-full flex flex-col">
-        <div className="mb-10">
+        <div className="mb-10 cate-title">
           <span className="text-2xl font-black mr-3 text-gray-700">
             Learned
           </span>
