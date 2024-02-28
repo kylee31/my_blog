@@ -5,8 +5,8 @@ import { Props } from "@/types/postType";
 import { Mdx } from "@/components/Mdx";
 import Link from "next/link";
 
-export default async function DocPage({ params }: Props) {
-  const post = await getDocFromParams({ params });
+export default function DocPage({ params }: Props) {
+  const post = allLearneds.find((doc) => doc.slug === params.slug);
 
   if (!post) {
     notFound();
@@ -25,10 +25,4 @@ export default async function DocPage({ params }: Props) {
       </div>
     </Layout>
   );
-}
-
-async function getDocFromParams({ params }: Props) {
-  const doc = allLearneds.find((doc) => doc.slug === params.slug);
-
-  return doc ?? null;
 }

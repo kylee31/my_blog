@@ -3,10 +3,9 @@ import { allProjects } from "contentlayer/generated";
 import Layout from "@/components/Layout";
 import { cateProps } from "@/types/postType";
 import { Mdx } from "@/components/Mdx";
-import Link from "next/link";
 
 export default async function DocPage({ params }: cateProps) {
-  const post = await getDocFromParams({ params });
+  const post = await allProjects.find((doc) => doc.slug === params.cate);
 
   if (!post) {
     notFound();
@@ -25,11 +24,4 @@ export default async function DocPage({ params }: cateProps) {
       </div>
     </Layout>
   );
-}
-
-//커스텀 훅
-async function getDocFromParams({ params }: cateProps) {
-  const doc = allProjects.find((doc) => doc.slug === params.cate);
-
-  return doc ?? null;
 }

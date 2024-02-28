@@ -1,15 +1,161 @@
 ---
-title: Next.js 동적 라우팅
-date: 2024-02-27
-description: Next.js의 동적 라우팅 구현하기 (with app router)
+title: Contentlayer 적용
+date: 2024-02-26
+description: Next.js의 SSR,SSG에 대한 이해와 contentlayer 적용 과정
 cate: myblog
 ---
 
-> Next.js 13의 app router 기능을 이용하여 동적 라우팅을 하는 방법을 알아보자. 특히 path parameter를 여러 개 사용할 때
-> app router에서는 어떤 방식으로 구현해야 하는지 정리해보았다.
+> SSR(Server Side Rendering), SSG(Static Site Generation) 구현이 가능한 Next.js를 사용하여
+> MDX를 활용한 블로그 글 포스팅하기 (with contentlayer)
 
 <hr />
 
-[동적 라우팅 관련](https://sj0826.github.io/nextjs/nextjs-nextjs%EA%B0%80-%EB%9D%BC%EC%9A%B0%ED%8C%85%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95/)<br/>
-[동적(중첩) 라우팅 관련](https://velog.io/@jay/Next.js-13-master-course-routing)<br/>
-[Dynamic Routing - Next.js 공식 문서](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes)<br/>
+MDX란 markdown 문법과 JSX 문법이 합쳐진 문법이다. 해당 형식은 markdown 문법으로 작성하고 최종적으로
+마크업(HTML) 문서로 변환하는 단계가 필요하다. Contentlayer는 Next.js와 함께 사용할 수 있는 정적 콘텐츠 관리 도구로
+해당 마크다운 파일을 읽어 데이터 객체로 변환하여 사용할 수 있어, 이를 통해 마크다운 파일에서 가져온 콘텐츠를
+동적으로 렌더링하고 페이지에 통합할 수 있다. (즉, Contentlayer는 Next.js 애플리케이션에서 정적 콘텐츠 관리를 단순화하고, 개발자들이 쉽게 마크다운
+파일을 활용하여 동적인 웹 사이트를 구축할 수 있도록 도와준다.)
+
+13 이전 Next.js에서 getStaticPaths 함수를 사용하여 Next.js에게 해당 동적 라우트가 어떤 경로들을
+가질 수 있는지 미리 알려주고, Next.js가 빌드 시점에 모든 가능한 경로들을 사전에 생성하여 HTML 파일로 저장하도록 만들었다.
+getStaticPaths는 getStaticProps와 함께 사용해야 하는데 getStaticProps는 각 경로에 대한 데이터를 불러오는 역할을 한다.
+
+13 이후부터는 RSC 개념을 사용하여 모든 컴포넌트가 서버 측에서만 렌더링 되는 것이 기본이므로 위의 함수들이 필요없어졌다. (app router 사용 시)
+_페이지 라우팅 방식에서는 반드시 SSR관련 함수를 page에 작성해야한다. 하지만 서버컴포넌트는 컴포넌트에 서버 로직을 작성할 수 있다._<br/>
+(➕[좀 더 자세한 설명](https://haesoo9410.tistory.com/404))
+
+contentlayer는 마크다운 문서의 마크업 변환에 mdx-bundler 패키지를 의존하고 있다. mdx-bundler는 내부적으로
+마크다운 문서를 해석하여 HTML로 변환하는 remark 패키지와 HTML을 추상 구문 트리 형태의 데이터로
+만들어 사용자가 원하는 변경을 HTML에 적용할 수 있도록 도와주는 rehype 패키지를 사용한다. [관련 Next.js Doc](https://nextjs.org/docs/pages/building-your-application/configuring/mdx#remote-mdx)
+
+Contentlayer 사용은 다음과 같다.
+
+### Contentlayer 설정
+
+1. Contentlayer 설치
+
+```bash
+yarn add contentlayer next-contentlayer
+```
+
+2. next.js와 모듈 연결
+
+```js:▶next.config.js
+const { withContentlayer } = require('next-contentlayer');
+
+const nextConfig = {
+  reactStrictMode: true,
+}
+
+module.exports = withContentlayer(nextConfig)
+```
+
+3. typescript 추가 설정
+
+```js:▶tsconfig.js
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "contentlayer/generated": ["./.contentlayer/generated"]
+      // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    }
+  },
+  "include": [".contentlayer/generated"]
+  //          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+}
+```
+
+### Contentlayer 사용
+
+1. contentlayer.config.js에서 MDX 파일 형식 및 타입 등을 지정해주고 소스 생성을 설정해준다.
+
+```js:▶contentlayer.config.js
+import { defineDocumentType, makeSource } from "contentlayer/source-files";
+import rehypeCodeTitles from "rehype-code-titles";
+import rehypePrettyCode from "rehype-pretty-code";
+
+export const Learned = defineDocumentType(() => ({
+    name: "Learned",
+    filePathPattern: `learned/*.mdx`,
+    contentType: "mdx",
+    fields: {
+        title: { type: "string", required: true },
+        date: { type: "string", required: true },
+        description: { type: "string", required: true },
+    },
+    computedFields: {
+        slug: {
+            type: "string",
+            resolve: (post) => post._raw.sourceFileName.replace(".mdx", ""),
+        },
+    },
+}));
+
+export default makeSource({
+    contentDirPath: "posts",
+    documentTypes: [Learned, Projects],
+    mdx: {
+        rehypePlugins: [
+          ...{/*SEARCH: rehype에 대해 알아보기*/}
+        ],
+    },
+});
+```
+
+2. 이후 MDX를 작성하면 설정에 맞게 생성된 파일이 배열 형태로 제공된다. (디렉토리내에 등록된 mdx 파일들을 가져오는 배열)
+   즉, 마크다운 글 데이터에 접근하려면 Learned[] 타입을 띄고있는 allLearned 배열에 접근하면 글 데이터를 얻어올수 있다는 뜻!
+
+```tsx:▶page.tsx
+import { allLearneds } from "@/.contentlayer/generated";
+...
+<div>
+  {allLearneds.map((learned, idx) => {
+      ...
+  })}
+</div>
+...
+```
+
+### 💥에러 해결
+
+- **MDX에 CSS 적용 안됨**<br/>
+  내가 작성하고 있는 내용(인용문, 리스트 등)이 markdown 요소가 적용된 HTML 요소이므로 요소에 맞게 보여져야 하는데,
+  텍스트만 출력되는 현상이 나타나고 있다. html 요소가 제대로 생성되지만 화면엔 나타나지 않으므로 MDX 렌더링은 문제가 아니었다.
+
+  ✅ tailwind CSS(typograhpy)가 제대로 적용되지 않아서 발생한 문제! 패키지 다운로드하고 mdx 컴포넌트에
+  적용하였다. ❗ 새로운 라이브러리나 프레임워크 사용 시 필요한 패키지들을 잘 확인하자.
+
+  1. tailwind가 markdown 파일에 적용되도록 typograhpy를 설치해준다
+
+  ```bash
+  yarn add @tailwindcss/typography
+  ```
+
+  2. tsconfig.js(혹은 jsconfig.js)에서 플러그인을 추가해준다.
+
+  ```js:▶tsconfig.js
+   plugins: [
+      require('@tailwindcss/typography'),
+    ],
+  ```
+
+{/* SEARCH: mjs에 대해 알아보기 */}
+
+- **mjs 파일 형식**<br/>
+  Node version에 대한 mjs 파일 지원?
+  (Contentlayer 모듈 연결 중 next.config.mjs에서 오류가 났다. next.config.js로 변경) mjs는 모듈 형태로 자바스크립트 코드를
+  모듈로 구성하는 파일 형식이다. 프로젝트 생성 시 next.config가 mjs로 만들어졌는데 이에 대한 오류가 발생하며 실행되지 않았다.
+  next.config.js로 변경하여 해결했다.
+
+* **css 값 변경**<br/>
+  typography에서 제공하는 prose 테마에서 max-width 설정을 typograhpy plugin으로 사용 가능하다. (max-w-none)<br/>
+  [tailwind prose max width 설정](https://stackoverflow.com/questions/74914969/override-65ch-max-width-in-tailwind-css-typography)
+
+<hr />
+
+### 📌참고
+
+- [Build A MDX-Powered Blog With Contentlayer And Next](https://blog.openreplay.com/build-a-mdx-powered-blog-with-contentlayer-and-next/)
+- [Contentlayer란? next.js 13에서 활용하기](https://velog.io/@boyeon_jeong/Nest.js-getStaticPaths)
+- [Next.js에서 contentlayer 사용하여 손쉽게 정적블로그 만들기](https://yiyb-blog.vercel.app/posts/nextjs-contentlayer-blog)

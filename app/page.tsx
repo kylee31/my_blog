@@ -12,7 +12,6 @@ export default function Home() {
       <div className="relative flex flex-col mb-16 place-items-center text-center">
         <span>결과를 확인할 수 있는 활동을 좋아하는 개발자입니다.</span>
         <span>가독성이 높은 코드, 단순하지만 깔끔한 디자인을 선호합니다.</span>
-        {/*TODO: github logo & link 넣기*/}
         <div className="flex">
           <a
             className="mt-5 mr-3"

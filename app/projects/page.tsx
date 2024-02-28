@@ -1,13 +1,13 @@
-import { allProjects } from "@/.contentlayer/generated";
 import Layout from "@/components/Layout";
 import Posts from "@/components/Posts";
 import { myProject } from "@/data/posts";
+import "../../styles/pages.css";
 
 export default function Cate() {
   return (
     <Layout>
       <div className="w-full flex flex-col">
-        <div className="mb-10">
+        <div className="mb-10  cate-title">
           <span className="text-2xl font-black mr-3 text-gray-700">
             Projects
           </span>
