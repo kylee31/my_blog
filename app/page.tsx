@@ -9,10 +9,14 @@ export default function Home() {
         <h1 className="mb-10 text-4xl font-extrabold text-black">{`231's Blog`}</h1>
       </div>
       <Image src="/main.gif" alt="" priority width={400} height={100} />
-      <div className="relative flex flex-col mt-5 mb-11 place-items-center text-center">
-        <span>결과를 확인할 수 있는 활동을 좋아하는 개발자입니다.</span>
+      <div className="relative flex flex-col mt-5 mb-11 place-items-center text-center text-xs text-gray-700">
+        <span>결과를 확인할 수 있는 모든 활동을 좋아하는 개발자입니다.</span>
         <span>
-          가독성이 높은 코드, 단순하지만 직관적인 디자인을 선호합니다.
+          가독성이 높은 코드, 단순하지만 직관적인 디자인을 추구합니다.
+        </span>
+        <span>
+          지난 기술을 회고하고, 새로운 기술을 습득하며 지식을 채우기 위해
+          노력합니다.
         </span>
         <div className="flex mt-5">
           <a
