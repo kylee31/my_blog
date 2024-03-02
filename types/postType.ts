@@ -1,7 +1,8 @@
 export type myProjectType={
     title:string,
     slug:string,
-    desc:string
+    desc:string,
+    link:string
 }
 
 export type Props={
