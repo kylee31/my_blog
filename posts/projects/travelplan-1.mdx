@@ -1,5 +1,5 @@
 ---
-title: 비동기 데이터 통신 SSR로 리팩토링
+title: 📝... 비동기 데이터 통신 SSR로 리팩토링
 date: 2024-02-29
 description: SSR 방식 적용하도록 리팩토링
 cate: travelplan
@@ -9,24 +9,108 @@ cate: travelplan
 
 <hr />
 
-page router 방식일 때 SSR, SSG를 구현할 때 반드시 page에서 getServerSideProps, getStaticProps와 같은 함수를 사용하여
-데이터를 가져오는 시기를 정했다.
+pages router 방식일 때 SSR, SSG를 구현할 때 반드시 page에서 getServerSideProps, getStaticProps와 같은 함수를 사용하여
+데이터를 가져와 HTML을 생성하는 시기를 정했다. (서버 측에서 렌더링하는지, 빌드 시 생성되는지)
+또한 pages router 방식은 pages 폴더 아래 파일(페이지 파일)에서만 위의 함수를 사용할 수 있었다.
 
-- getServerSideProps: 이 함수를 사용하면 서버 측에서 각 요청마다 데이터를 가져와서 페이지를 렌더링합니다. 매 요청마다
-  서버 측에서 데이터를 가져오므로 최신 데이터를 사용할 수 있습니다. 주로 동적인 데이터를 다루거나 SSR(Server-Side Rendering)
-  방식을 적용할 때 사용됩니다.
-- getStaticProps: 이 함수를 사용하면 빌드 시점에 페이지에 필요한 데이터를 미리 가져와서 정적인 HTML 파일을 생성합니다.
-  이후에는 빌드된 HTML 파일을 서비스하므로 서버 부하를 줄일 수 있습니다. 정적인 데이터를 다루거나 SSG(Static Site Generation)
-  방식을 적용할 때 주로 사용됩니다.
+- getServerSideProps: 이 함수를 사용하면 서버 측에서 각 요청마다 데이터를 가져와서 페이지를 렌더링한다. 매 요청마다
+  서버 측에서 데이터를 가져오므로 최신 데이터를 사용할 수 있다. 주로 동적인 데이터를 다루거나 SSR(Server-Side Rendering)
+  방식을 적용할 때 사용된다.
+- getStaticProps: 이 함수를 사용하면 빌드 시점에 페이지에 필요한 데이터를 미리 가져와서 정적인 HTML 파일을 생성한다.
+  이후에는 빌드된 HTML 파일을 서비스하므로 서버 부하를 줄일 수 있다. 정적인 데이터를 다루거나 SSG(Static Site Generation)
+  방식을 적용할 때 주로 사용된다. (getStaticPaths로 이동할 경로에 대한 모든 경우의 수에 대한 값 로드, getStaticProps와 함께 사용되며
+  getServerSideProps와 같이 사용할 수 없다.)
+
+app router에서는 기본적으로 모든 컴포넌트가 서버 컴포넌트이기 때문에 page 파일이 아닌 다른 곳에서도 자유롭게 구현할 수 있게 되었다.
+위의 함수들을 사용하지 않고, Next.js에서 fetch API를 확장하여 제공하므로 해당 옵션을 사용하여 SSR, SSG를 구현한다.
+fetch가 아닌 다른 외부 라이브러리(axios와 같은)는 {/* SEARCH: 다른 방법 정리하기 */}를 사용하여야 한다.
+
+[Data Fetching, Next.js](https://vercel.com/blog/nextjs-app-router-data-fetching)
+
+> Next.js 13에서 데이터를 가져오는 새로운 방식은 fetch 웹 API 위에 구축되었고, 서버 컴포넌트에서 async/await을 사용합니다.
+> 이제 getServerSideProps와 getStaticProps를 사용하는 대신, **가져온 모든 데이터는 기본적으로 정적이며, 빌드 시에 렌더링**됩니다.
+> 그래서 Next.js는 fetch 옵션 객체를 확장해서 각 요청마다 자체 캐싱 및 재검증 규칙을 설정할 수 있도록 했습니다.
+> \{next: revalidate\} 옵션을 사용하면, 정적인 데이터를 설정된 간격으로 새로고침하거나 백엔드에서 변경이 있을 때마다
+> 새로고침 할 수 있습니다. 자주 변경되는 데이터나 사용자와 관련된 동적인 데이터의 경우, fetch 요청 시에 \{cache: no-store\}
+> 옵션을 사용할 수 있습니다.
+
+내가 이전에 구현할 때는 익숙했던 비동기 통신 라이브러리 axios를 사용하여 데이터를 로딩했는데, 이는 Next.js에서
+권유하는 라이브러리가 아니었다. 또한 app router 방식으로 변경되며 fetch API 위에 구축된 기능을 사용하여 SSR를 구현해주어야 했던
+것이다. 기본적으로 SSG가 되므로 fetch 요청으로 수정하고 \{cache: no-store\} 옵션을 주었다.
+
+```jsx:▶RecommendTable.jsx
+//수정 전 코드
+    const getData = async () => {
+      await axios
+        .get(requestUrl)
+        .then((res) =>
+          res.data.response.body.items !== null
+            ? (setRecommendData(res.data.response.body.items.item),
+              setIsGetRecommendData(true))
+            : setIsGetRecommendData(false)
+        )
+        .catch((err) => console.log(err));
+    };
+```
+
+```jsx:▶RecommendTable.jsx
+//수정 후 코드
+const getData = async () => {
+      await fetch(requestUrl, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+        cache: "no-store",
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Network response was not ok");
+          return res.json();
+        })
+        .then((data) =>
+          data.response.body.items !== null
+            ? (setRecommendData(data.response.body.items.item),
+              setIsGetRecommendData(true))
+            : setIsGetRecommendData(false)
+        )
+        .catch((err) => console.log(err));
+    };
+```
+
+???
+네, 맞습니다. SSR(Server-Side Rendering)는 각각의 경로에 대해 서버 측에서 사전에 페이지를 렌더링하여 정적 HTML을 제공하는 방식입니다. 즉, 사용자가 새로운 경로로 이동할 때마다 서버는 해당 경로에 대한 정적 HTML 파일을 제공하여 초기 렌더링을 처리합니다. 이러한 방식은 초기 로딩 속도를 향상시키고 검색 엔진 최적화(SEO)에 유리합니다.
+
+한편, 클라이언트 측에서의 상호작용은 동적으로 페이지를 업데이트하는데 사용됩니다. 이는 사용자가 동일한 페이지에 머무르는 동안 발생하는 상호작용으로, 주로 사용자 입력 또는 이벤트에 의해 발생합니다. 예를 들어, 사용자가 버튼을 클릭하거나 양식을 제출할 때 발생하는 데이터의 변경은 클라이언트 측에서 처리됩니다. 이때 페이지의 일부분이 동적으로 변경되어 사용자에게 업데이트된 내용을 보여줍니다.
+
+따라서 SSR은 페이지의 초기 렌더링을 처리하고, 클라이언트 측에서의 상호작용은 페이지가 이미 로드된 후에 발생하는 동적인 업데이트를 담당합니다. 이는 더 나은 사용자 경험을 제공하기 위해 SSR과 클라이언트 측 상호작용을 조합하여 사용될 수 있습니다.
+
+![](/projects/travelplan/1-1.jpg)
+[📍 꼬리와 돈민찌의 코딩캠프 참고 표](https://cat-minzzi.tistory.com/104)
+
+**➕ 추가**
+
+axios와 fetch의 동작 방식이 다른 이유는 이 두 라이브러리가 서로 다른 디자인 및 구현을 가지고 있기 때문이다.
+
+axios: axios는 기본적으로 JSON 형식의 데이터를 반환하는 것이 디자인되어 있습니다. 이는 axios가 대부분의 웹 API가 JSON 형식의 데이터를 반환하는 현대적인 웹 개발 환경에 맞게 설계되었기 때문입니다.
+따라서 axios를 사용하여 HTTP 요청을 보낼 때 별도의 Accept 헤더를 설정하지 않아도 기본적으로 서버에 JSON 형식의 응답을 요청하게 됩니다.
+
+fetch: fetch API는 브라우저에서 제공되는 내장 API이며, 더욱 더 원시적인 형태의 API입니다. fetch를 사용하여 HTTP 요청을 보낼 때는 기본적으로 Accept 헤더가 설정되지 않습니다.
+따라서 fetch를 사용하여 HTTP 요청을 보낼 때 서버에 전달되는 Accept 헤더는 기본값이 없으므로 서버는 응답 형식을 결정할 때에는 요청에 대한 정보만으로 판단하게 됩니다. 서버의 기본 설정에 따라 응답 형식이 결정됩니다.
+결론적으로, axios는 JSON 형식의 응답을 기본으로 설정하여 개발자가 별도의 설정 없이도 편리하게 사용할 수 있도록 되어 있습니다. 반면에 fetch는 더욱 더 원시적이며 유연한 형태의 API로, 개발자가 응답 형식을 명시적으로 설정해야 합니다.
 
 <hr />
 
 👩‍💻💬 실무에서 바로 Next.js를 사용해야 했기 때문에 구현에 필요한 개념들만 간단히 알고 있었다.
 Next.js 13 이후 버전에서 app router 기능을 제공하며 서버 컴포넌트와 클라이언트 컴포넌트가 생겼고, 클라이언트 측 렌더링이 필요한
 상황이라면 컴포넌트 파일 상단에 "use client"를 명시하는 것까지 습득했다. 그러나 근본적으로 Next.js가 13 이전에는 어떤
-형식으로 사용되었는지, SSR, SSG를 어떻게 구현해야 하는지 알지 못했다. 이 블로그를 만들며 정확한 개념 정리 및 사용법을
-알게 되었고 해당 프로젝트를 리팩토링하게 되었다.
+형식으로 사용되었는지, 데이터를 동적으로 가져올 때 SSR, SSG를 코드에서 어떻게 구현해야 하는지 알지 못했다.
+이 블로그를 만들며 정확한 개념 정리 및 사용법을 알게 되었고 해당 프로젝트 일부를 리팩토링하게 되었다.
 
 <hr />
 
 ### 📌 참고
+
+- [Next.js 에센셜: Next.js 웹앱에서 Client Side Rendering을 추구하면 안되는걸까?](https://cat-minzzi.tistory.com/104)
+- [Next.js 12 → Next.js 13 달라진 점 App router, Data fetching](https://velog.io/@wlwl99/Next.js-12-Next.js-13-%EB%8B%AC%EB%9D%BC%EC%A7%84-%EC%A0%90-App-router-Data-fetching)
+- [Next.js fetch Doc](https://nextjs.org/docs/app/api-reference/functions/fetch?ref=blog.deercorp.com)
+- [Next.js getServerSideProps, getStaticProps, getStaticPaths](https://talkwithcode.tistory.com/99)

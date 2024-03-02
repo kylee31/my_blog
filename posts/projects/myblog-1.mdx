@@ -62,13 +62,13 @@ tailwind.config.ts와 tsconfig.json에도 [추가 설정](https://blog.openrepla
 
 이후 구현할(하고 싶은) UX/UI는 다음과 같다. (중요 기능 ⭐표시)
 
-1. ⭐게시글 페이지(mdx 렌더링 구현)
-2. ⭐프로젝트 카테고리 분리
+1. ⭐게시글 페이지(mdx 렌더링 구현) (2024.02.27 완료)
+2. ⭐프로젝트 카테고리 분리 (2024.02.28 완료)
 3. 댓글 기능
 4. 페이지 상위 이동 버튼
-5. 목록 nav
-6. main 페이지 레이아웃 및 디자인 수정
-7. 페이지 정렬을 위한 mdx 정보 추가
+5. 게시글 목차 nav
+6. main 페이지 레이아웃 및 디자인 수정 (~ing)
+7. 페이지 정렬을 위한 mdx 정보 추가 (tag 별 카테고리 분류 등의 기능을 위해)
 8. ...(추가 중)
 
 🔽 초기 구현 완료 시 UI(2024.02.27)
@@ -83,16 +83,16 @@ tailwind.config.ts와 tsconfig.json에도 [추가 설정](https://blog.openrepla
 tailwind는 Tailwind CSS IntelliSense 확장 프로그램으로 프로그램 구현 중반부터는 편리했지만 기본적으로 알고있던 CSS를 [tailwind CSS Document](https://tailwindcss.com/docs/installation)
 에서 찾아서 작성하느라 시간이 걸렸다. 렌더링 관련 차이점은 크게 느껴지지 않았지만 가장 크게 체감할 수 있었던 부분은
 컴포넌트명을 고민하지 않아도 된다는 점이였다. 물론 못생긴 코드(익숙하지 않다보니 더욱 못생긴)..라는 단점도 존재하고,
-러닝 커브가 조금 높다고 느껴졌다.
+(기존에 알고있는 css 속성과 값을 사용하지 않으니)러닝 커브가 조금 높다고 느껴졌다.
 
 또 MDX 렌더링 과정에서 헤매었을 뿐, velog와 readme 작성으로 익혀둔 markdown 문법으로 서버없이 블로그를
 구현할 수 있어 편리했다.
 
-Next.js와 MDX를 활용하는 과정에 대한 글을 많지만 대다수가 13 이전 버전을 기준으로 작성된 글이라 어려움이 있었다.
+Next.js와 MDX를 활용하는 과정에 대한 글을 많지만 대다수가 12 버전을 기준으로 작성된 글이라 어려움이 있었다.
 이왕 구현하는 거(프론트엔드 분야는 더더욱 빠르게 변화할테니..) 업데이트 된 버전으로 구현하고 싶었다.
 버전 14로 진행하며 [miryang님의 블로그](https://miryang.dev/blog/build-blog-with-nextjs)와
 [github](https://github.com/MiryangJung/miryang.dev/blob/main/app/blog/%5Bslug%5D/components/mdx.tsx)에서
-정말 많은 도움을 받았다! 직접 코드를 살피면서 내 코드에 적용했다. 역시 다른 코드 읽는 건 성장에 큰 도움을 준다..!
+정말 많은 도움을 받았다! 참고용으로 올려주신 repo 코드를 살피면서 내 코드에 적용했다. 역시 다른 코드 읽는 건 성장에 큰 도움을 준다..!
 
 <hr />
 
