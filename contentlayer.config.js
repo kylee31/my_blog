@@ -34,12 +34,33 @@ export const Projects = defineDocumentType(() => ({
             type: "string",
             resolve: (post) => post._raw.sourceFileName.replace(".mdx", ""),
         },
+        cate: {
+            type: "string",
+            resolve: (post) => post._raw.sourceFileName.replace(".mdx", ""),
+        },
+    }
+}))
+
+export const Code = defineDocumentType(() => ({
+    name: "Code",
+    filePathPattern: `code/*.mdx`,
+    contentType: "mdx",
+    fields: {
+        title: { type: "string", required: true },
+        description: { type: "string", required: true },
+        algorithm: { type: "string", required: true }
     },
+    computedFields: {
+        slug: {
+            type: "string",
+            resolve: (post) => post._raw.sourceFileName.replace(".mdx", ""),
+        }
+    }
 }))
 
 export default makeSource({
     contentDirPath: "posts",
-    documentTypes: [Learned, Projects],
+    documentTypes: [Learned, Projects, Code],
     mdx: {
         rehypePlugins: [
             rehypeCodeTitles,
