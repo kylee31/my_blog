@@ -139,7 +139,8 @@ Next.js 13 이후 버전에서 app router 기능을 제공하며 서버 컴포�
 캐싱하고 있었다..!) 이 블로그를 만들며 정확한 개념 정리 및 사용법을 알게 되었고 해당 프로젝트 일부를 리팩토링하게 되었다.
 
 결국 현재 버전을 기준으로 Next.js는 SSR 방식과 RSC로 렌더링 되고있다고 이해하자! 기본적으로 (RSC로 인해) 빌드 시 HTML이 생성되며
-외부 API를 사용하여 데이터 가져올 때 페이지 특성에 따라 옵션을 설정해주어야 해당 페이지가 SSR, SSG로 구현된다고 할 수 있다.
+외부 API를 사용하여 데이터 가져올 때 **페이지 특성(페이지가 자주 업데이트 되어야 하는 데이터를 가지고 있는지,
+정적인 콘텐츠를 담고 있는지)**에 따라 옵션을 설정해주어야 해당 페이지가 SSR, SSG로 구현된다고 할 수 있다.
 (업데이트가 자주 필요하다면 SSR, 정적 콘텐츠는 SSG)
 
 ❓ 클라이언트 컴포넌트를 명시하면 해당 컴포넌트의 하위 컴포넌트가 모두 암묵적으로 클라이언트 컴포넌트가 된다.
@@ -151,6 +152,7 @@ Next.js 13 이후 버전에서 app router 기능을 제공하며 서버 컴포�
 ### 📌 참고
 
 - [Next.js 13에서 SSG와 ISR 적용하기](https://mycodings.fly.dev/blog/2022-11-16-nextjs-13-how-to-ssg-isr-and-not-found)
+- [[Next.js 13] 공식 문서 Data Fetching 1(Fundamentals ~ Caching)](https://riverkim.kr/214)
 - [Next.js Data fetching 방법 4가지](https://velog.io/@qqww08/next-13-%EC%95%84%EB%8A%94-%EB%A7%8C%ED%81%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-1-with.-data-fetching)
 - [Next.js 에센셜: Next.js 웹앱에서 Client Side Rendering을 추구하면 안되는걸까?](https://cat-minzzi.tistory.com/104)
 - [Next.js 12 → Next.js 13 달라진 점 App router, Data fetching](https://velog.io/@wlwl99/Next.js-12-Next.js-13-%EB%8B%AC%EB%9D%BC%EC%A7%84-%EC%A0%90-App-router-Data-fetching)
