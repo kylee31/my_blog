@@ -1,0 +1,24 @@
+---
+title: Python 오류 정리
+description: 문제 풀이 중 발생한 오류 정리
+algorithm: none
+---
+
+> 기존 자바스크립트로 알고리즘 문제를 풀다가, 알고리즘에 특화된 언어인 파이썬으로 변경하여
+> 알고리즘 공부를 하면서 마주치는 오류를 정리해보자.
+
+- 'int' object is not subscriptable
+  int는 정수인데 문자열처럼 인덱스로 접근하려고 하니 오류가 발생했다. 자바스크립트와 달리 자료형을 한번 더 생각해주자.
+
+- EOFerror
+  입력의 종료 조건을 주지 않은 문제들을 만났을 때, 예외처리를 해주어 예외 오류가 발생하지 않도록 구현한다.
+  [Python, EOF 에러 처리](https://hueco.tistory.com/296)
+
+- can only concatenate list (not "NoneType") to list
+  list의 메서드 중 reverse()는 반환값 없이 자기 자신을 변경한다!!!
+
+  값을 반환하길 바란다면 내장함수인 reversed()를 사용하자
+
+- can only concatenate list (not "list_reverseiterator") to list
+  reversed 내장함수를 사용했는데, 리스트를 연결해주기 위해서 +로 연결하니 reversed한 결과가 list 형태가 아니라는 오류 출력.
+  list()로 감싸주어 자료형을 변경해주어야 한다.

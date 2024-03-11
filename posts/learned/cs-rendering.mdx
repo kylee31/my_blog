@@ -1,5 +1,5 @@
 ---
-title: 📝... CS, 렌더링 방식(CSR, SSR, SSG)
+title: CS, 렌더링 방식(CSR, SSR, SSG)
 date: 2024-02-26
 description: React와 Next.js로 정리해보는 렌더링 방식
 ---
@@ -38,11 +38,22 @@ export const DataFetch = async() => {
 }
 ```
 
+Next.js에서 처음 페이지를 작성할 땐 위와 같이 설정하면 SSR 또는 SSG 렌더링 방식이 되고, 클라이언트 측에서 API로
+데이터를 가져올 때 상호작용을 통해 발생하는 페이지(데이터) 업데이트는 CSR 방식이라고 할 수 있다. (SSR은 하이드레이션
+과정을 포함하므로 SSR이라고 할 수 있으며 SSG로 가져왔을 땐 SSG+CSR이 되는 것)
+
+즉, 12 버전에서는 기본적으로 CSR 방식을 제공하며 함수를 사용하여 SSR, SSG 방식으로 렌더링 할 수 있었고, 13 이후
+서버 컴포넌트가 도입되며 기본적으로 서버 측에서 렌더링(RSC)하는 방식을 사용하며 fetch API가 확장되어 SSR, SSG 방식을
+선택할 수 있게 되었다.
+
+![](/learned/cs-rendering-2.jpg)
+
 <hr />
 
 👩‍💻💬 Next.js를 완전히 이해하지 못한 채 "travel plan 프로젝트"를 진행했고, 현재 블로그를 구현하면서 Next.js에 대해
 놓친 부분을 발견했다. 기존 React 프로젝트에서 사용하던 axios를 Next.js 13에서도 사용하였는데, 외부 라이브러리를 사용하여
-데이터를 캐싱하는 경우에는 직접 설정해주어야 했다.
+데이터를 캐싱하는 경우에는 직접 설정해주어야 했다. (fetch의 경우 기본 설정이 \{cache:'force-cache'\}로 되어있어
+옵션을 생략하면 캐시를 강제하게 된다. 정적 사이트(SSG))
 
 📝 [Next.js 13 캐싱 문제](https://velog.io/@myeongjae-kim/Next.js-v13-App-Router%EB%A1%9C-%EC%A0%9C%ED%92%88-%EB%A7%8C%EB%93%A4%EA%B8%B0-fetch%EB%A5%BC-%EB%8B%A4%EB%A3%A8%EB%8A%94-%EA%B8%B0%EC%88%A0)<br/>
 _App Router 문서를 읽어보니 Next.js 서버쪽에서 캐싱 관련 기능을 fetch를 확장해서 제공하고 있고,
@@ -60,14 +71,13 @@ fetch가 아닌 다른 라이브러리를 사용한다면 직접 캐싱 관련 �
 - SSG는 빌드 시에 HTML을 완성하여 제공한다. 그렇기 때문에 정적인 콘텐츠에 적합하다. (정적 콘텐츠에 적합하다는 것이지
   페이지가 정적이라는 뜻은 아니다.)
 
-👩‍💻❓ 그렇다면 이전 Next.js 프로젝트에서 axios를 적용한 컴포넌트는 CSR 형태로 클라이언트 측에서 데이터를 fetching하고
-캐싱하고 있나..? 그런듯하다.
-
 <hr />
 
 ### 📌참고
 
 - ⭐[Next.js 13 으로 알아보는 FE 렌더링 방식 (SSR vs RSC)](https://haesoo9410.tistory.com/404)
+- ⭐[새로 등장한 '리액트 서버 컴포넌트' 이해하기](https://yozm.wishket.com/magazine/detail/2271/)
+- [Next.js 13에서 SSG,SSR와 ISR 적용하기](https://mycodings.fly.dev/blog/2022-11-16-nextjs-13-how-to-ssg-isr-and-not-found)
 - [Next 13 Data Fetch - 1](https://velog.io/@qqww08/next-13-%EC%95%84%EB%8A%94-%EB%A7%8C%ED%81%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-1-with.-data-fetching)
 - [Next.js v13 App Router로 제품 만들기: 이제 더 이상 Axios를 쓰지 않기로 했습니다](https://velog.io/@myeongjae-kim/Next.js-v13-App-Router%EB%A1%9C-%EC%A0%9C%ED%92%88-%EB%A7%8C%EB%93%A4%EA%B8%B0-fetch%EB%A5%BC-%EB%8B%A4%EB%A3%A8%EB%8A%94-%EA%B8%B0%EC%88%A0)
 - [Next.js Rendering Strategies: SSR, SSG, and ISR Compared](https://hybridheroes.de/blog/2023-05-31-next-js-rendering-strategies/)

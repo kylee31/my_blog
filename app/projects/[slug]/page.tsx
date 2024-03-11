@@ -19,11 +19,11 @@ export default function Project({ params }: Props) {
         {allProjects
           .filter((doc) => doc.cate.includes(params.slug))
           .map((project, idx) => {
-            const { slug, title, date, description, cate } = project;
+            const { title, date, description, cate } = project;
             return (
               <Link
                 key={title + idx}
-                href={`/projects/${params.slug}/${slug}`}
+                href={`/projects/${params.slug}/${cate}`}
                 className="pb-2 mb-2 border-b-2 border-solid border-gray"
               >
                 <span className="flex justify-between">

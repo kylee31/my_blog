@@ -1,0 +1,376 @@
+---
+title: Python 기초 문법 정리
+description: 사용 문법 총 정리
+algorithm: none
+---
+
+> Python 기본 문법 정리
+
+기본 자료형 (숫자, 문자열, 리스트, 딕셔너리) / 변수는 값을 가리키고 있다. (값을 담는 상자)
+
+### ❗ 자료형 (int, float, double, string 등을 상황에 맞게 변환해주는 것 잊지말기)
+
+#### 숫자
+
+- 사칙연산: + - \* /(몫) %(나머지)
+- 제곱: a\*\*b (a의 b 제곱)
+- boolean: True, False (대문자로 표기)
+- 조건 연산자: ==(같을 때) !=(다를 때) ...
+- 논리 연산자: and, or, not
+
+자료형에 맞는 +를 해주어야 한다~ 자바스크립트는 자료형이 없는 언어이므로 자유로운거(그래서 Typescript 출현)
+
+- 숫자를 문자열로 str()
+- 문자열을 정수로 int()
+
+#### 문자열
+
+- 문자열 길이: len(문자열)
+- 문자열 자르기: 문자열[n:m] (n부터 m까지~)
+- 특정 문자를 기준으로 문자열 자르기: 문자열.split('특정 문자')
+  특정 문자를 선택하려면 배열로 선택해주면 된다 문자열.split('.')[0] 잘린 문자열 기준 첫번째 원소 선택
+
+#### 리스트
+
+배열, 순서가 중요하게 값을 담는 것. 자료형에 관계없이 마음대로 담기 가능. list()
+
+- 리스트에 원소 담기: 리스트.append(추가할 값)
+- 리스트 자르기: [:]
+- 리스트 선택 (인덱스값을 마이너스로 하면 거꾸로)
+- 리스트 길이 구하기: len(리스트)
+- 리스트 정렬: sort() 오름차순, sort(reverse=True) 내림차순
+- 리스트에 원소가 들어있는지 boolean으로 반환: 원소 in 리스트
+  ```py
+  a=[1,2,3,4,5]
+  result=100 in a
+  print(result) #False
+  ```
+
+#### 딕셔너리
+
+객체, 키, 속성 값으로 이뤄진 것
+리스트와 딕셔너리가 조합되어 들어가기도 한다. (ex. 키로 문자열, 값으로 리스트, 리스트 값으로 딕셔너리)
+
+- 딕셔너리 값 추가: 딕셔너리명[키]=속성
+- 딕셔너리 키가 있는지 boolean으로 반환: 키 in 딕셔너리
+
+#### ➕ 리스트와 딕셔너리 함께 사용하기
+
+```py
+people=[{'name':'bob','age':'27'},{'name':'john','age':30}]
+print(people[0]['name'] #bob)
+```
+
+#### 조건문
+
+- if else elif
+
+#### 반복문
+
+- for
+
+```py
+number=[1,2,3,4,5]
+for num in number:
+    print(num)
+```
+
+- 원소의 인덱스 값 출력
+
+```py
+number=[1,2,3,4,5]
+for i, num in enumerate(number): #enumerate로 원소의 인덱스 값 출력 가능
+    #해당 조건문 순서가 print 뒤라면? 출력 후 break이므로 3까지 출력될 것
+    if(i>2):
+        break; #i가 2일때까지만 출력
+    print(i, num)
+```
+
+```py
+for i in range(1,10):
+  print(i)
+#1부터 9까지 출력 (마지막 요소에서 -1한 값)
+```
+
+for문을 큰 수부터 작은 수로 줄어들게 하려면 매개변수 세번째 자리에 -1로 값을 주면 된다.
+(이를 사용하여 줄어드는 값이나 늘어나는 값의 간격을 정할 수 있다. ex. 2씩 더하기 등)
+
+- while
+
+#### 함수
+
+```py
+def hello():
+    print('hello')
+
+def sum(a,b):
+    return a+b
+
+hello() #hello
+print(sum(1,2)) #3
+```
+
+- 문제 예제
+
+```py
+def check_gender(pin):
+    gen=pin.split('-')[1][:1]
+    if int(gen)%2!=0:
+        print(gen,'남')
+    else:
+        print(gen,'여')
+
+my_pin='200101-3012345'
+check_gender(my_pin)
+
+```
+
+#### 튜플(tuple)
+
+리스트와 동일하게 생겼으나 ()를 사용하며 불변형이다. (리스트는 값을 바꿀 수 있으나, 튜플은 값을 넣을 수도, 변경할 수 없다.)
+
+```py
+list=[1,2,3,4,5]
+tuple=(1,2,3,4,5)
+
+list[0]=-100
+tuple[0]=-100 #error로 실행불가
+
+print(list) # [-100,2,3,4,5]
+print(tuple)
+```
+
+주로 리스트 원소로 딕셔너리 사용하는 것 대신 튜플로 값 고정할 때?
+
+#### 집합(set)
+
+집합은 원소의 중복을 제거하여 반환한다.({}로 표현됨)
+집합을 사용하여 교집합, 합집합, 차집합(집합 연산자 &, |, -로)을 구할 수 있다.
+a라는 리스트가 존재한다면 a_set=set(a)로 나타낼 수 있다.
+
+```py
+student_a = ['물리2','국어','수학1','음악','화학1','화학2','체육']
+student_b = ['물리1','수학1','미술','화학2','체육']
+
+a_set=set(student_a)
+b_set=set(student_b)
+
+print(a_set&b_set) #교집합
+print(a_set|b_set) #합집합
+print(a_set-b_set) #차집합
+```
+
+#### f-string
+
+좀 더 편한 방법으로 변수를 사용하여 문자열 작성하기. (+로 합쳐주기 보다 f-string으로 작성하면 편하다.)
+문자열을 반복하려거나 할 때는 +로 엮어주는 것이 효율적이다.
+
+```py
+scores = [
+    {'name':'영수','score':70},
+    {'name':'영희','score':65},
+    {'name':'기찬','score':75},
+    {'name':'희수','score':23},
+    {'name':'서경','score':99},
+    {'name':'미주','score':100},
+    {'name':'병태','score':32}
+]
+
+for s in scores:
+    name=s['name']
+    score=str(s['score'])
+    print(f'{name}의 점수는 {score}입니다') ##f-string f를 명시해주고 뒷 문자열에 변수가 들어갈 자리를 {}로 만들어 주어 사용
+```
+
+### 예외 처리문
+
+try-except로 예외(에러) 상황이 발생했을 때 처리해주는 문법.
+클라이언트 측이 아닌 서버 측에서 잘못되었을 경우 오류를 처리해주기 위해 많이 사용한다. 그러나 남용한다면 어떤 에러가 발생하는지
+잡아내기 어려운 상황이 될 수 있기 때문에 웬만하면 사용하지 않는 것이 좋다.
+
+```py
+people = [
+    {'name': 'bob', 'age': 20},
+    {'name': 'carry', 'age': 38},
+    {'name': 'john', 'age': 7},
+    {'name': 'smith', 'age': 17},
+    {'name': 'ben', 'age': 27},
+    {'name': 'bobby'},
+    {'name': 'red', 'age': 32},
+    {'name': 'queen', 'age': 25}
+]
+
+# try 실행 중 예외가 발생한다면 멈추지 말고 except로 빠져라~
+for person in people:
+    try:
+        if person['age'] >20:
+            print(person['name'])
+    except:
+        print(person['name'], '에러입니다')
+```
+
+#### 파일 불러오기
+
+다른 파일 내용(함수 등)을 가져오고 싶을 때, import하여 가져올 수 있다. 파일을 분리하여 깔끔하게 작성할 수 있게 된다.
+
+```py
+from 다른 파일명 import *
+from 다른 파일명 import 특정 함수명
+```
+
+#### 한줄의 마법(문법)
+
+- if문 삼항연산자 <br/>
+  ▶ 참 if 조건문 else 거짓
+
+  ```py
+  num=3
+  if num%2==0:
+    result='짝수'
+  else:
+    result='홀수'
+
+  result_two=('짝수' if num%2==0 else '홀수') #삼항 연산자(참 if 조건문 else 거짓)
+
+  print(f'{num}은 {result}')
+  print(f'{num}은 {result_two}')
+  ```
+
+- for문 한줄로 작성<br/>
+  ▶ 변경 사항 for 원소 in 리스트
+
+  ```py
+  a_list=[1,3,4,5,2]
+
+  b_list=[]
+
+  for num in a_list:
+      b_list.append(num*2)
+
+  b_list_two=[a*2 for a in a_list] #for문 축약
+
+  print(b_list)
+  print(b_list_two)
+  ```
+
+  #### map,filter,lamda식
+
+  - map
+    리스트의 모든 원소를 조작하는 메서드
+
+    ```py
+    people = [
+        {'name': 'bob', 'age': 20},
+        {'name': 'carry', 'age': 38},
+        {'name': 'john', 'age': 7},
+        {'name': 'smith', 'age': 17},
+        {'name': 'ben', 'age': 27},
+        {'name': 'bobby', 'age': 57},
+        {'name': 'red', 'age': 32},
+        {'name': 'queen', 'age': 25}
+    ]
+    def check_adult(person):
+    if person['age']>20:
+    return '성인'
+    else:
+    return '청소년'
+
+    result=map(check_adult, people) #people을 하나하나 돌면서 값을 check_audult에 넣어라
+
+    print(list(result)) #그리고 반환된 값을 list로 만들어서 출력해라
+    ```
+
+  ✅ 정수를 입력받기 (map 활용)
+
+  ```py
+  # 입력받은 값을 split으로 나누고 그 값을 하나하나 돌면서 int로 변환
+  # 1 2로 입력하면 type이 str이므로 split()하여 int로 변환!
+  A,B=map(int,input().split())
+  ```
+
+- filter
+  리스트의 모든 원소 중 특별한 것만 골라내기
+
+  ```py
+  people = [
+    {'name': 'bob', 'age': 20},
+    {'name': 'carry', 'age': 38},
+    {'name': 'john', 'age': 7},
+    {'name': 'smith', 'age': 17},
+    {'name': 'ben', 'age': 27},
+    {'name': 'bobby', 'age': 57},
+    {'name': 'red', 'age': 32},
+    {'name': 'queen', 'age': 25}
+  ]
+
+  result=filter(lambda person: person['age']>20,people)
+
+  print(list(result))
+  ```
+
+- lambda식
+  람다식(lambda expression)은 익명 함수(anonymous function)를 만들기 위한 방법 중 하나.<br/>
+  ▶ lambda arguments: expression
+
+#### 함수 심화
+
+💡 해당 내용은 라이브러리를 가져다 사용하거나 하는 등의 상황에서 쓰이는 문법이니 직접 쓸 일은 거의 없으니 읽고
+참고하기만 해도 된다!
+
+- 함수의 매개변수
+
+  1. 함수의 매개변수를 지정하여 값을 줄 수도 있다.
+     def Hello(a,b) ... Hello(a=1,b=2)
+  2. 1을 이용하여 매개변수에 기본값을 줄 수 있다.
+     def Hello(a,b=2)
+  3. 입력값의 개수를 지정하지 않고 모두 받을 수 있다. \*args
+  4. 키워드 인수를 여러 개 받을 수 있다. \*\*kwargs
+
+3,4는 라이브러리에서 많이 사용되므로 그냥 읽어만 두자.
+
+#### 클래스
+
+객체 지향적: 클래스에 객체와 관련된 속성을 넣어두고 컨트롤 할 수 있는 함수를 붙여주고 함수를 불러다가
+각각의 인스턴스를 만들어 제어하는~
+
+```py
+class Monster(): #class Monster
+    hp=100
+    alive=True
+    def demage(self, attack): #함수 정의
+        self.hp=self.hp-attack
+        if self.hp<0:
+            self.alive=False
+    def status_check(self): #함수 정의
+        if self.alive==True:
+            print('live')
+        else:
+            print('dead')
+
+m1=Monster() #m1은 인스턴스.
+m1.demage(150)
+m1.status_check()
+
+m2=Monster()
+m2.demage(90)
+m2.status_check()
+```
+
+#### ➕추가
+
+- 특수문자 출력: 역슬래시(백슬래시), 작은 따옴표, 큰 따옴표(/,',") 출력 시 앞에 백슬래시를 붙여주어야 한다!
+
+* 값 입력받기: input() (정수를 입력받아 사용하려 한다면 int로 감싸주기)
+
+  ```py
+  num=int(input())
+  str=input()
+  ```
+
+* 빠른 입출력
+  Python을 사용하고 있다면, input 대신 sys.stdin.readline을 사용할 수 있다. (import sys)
+  단, 이때는 맨 끝의 개행문자까지 같이 입력받기 때문에 문자열을 저장하고 싶을 경우 .rstrip()을 추가로 해 주는 것이 좋다.
+  ```py
+  import sys
+  a,b=map(int,sys.stdin.readlin().split())
+  ```
