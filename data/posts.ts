@@ -10,7 +10,7 @@ export const myProject:myProjectType[]=[
     title:"Travel Plan",
     slug:"travelplan",
     desc:"지도 API, 지역축제 목록 API를 사용한 여행 계획 웹 서비스",
-    link:"http://travel-plan.kro.kr"
+    link:"http://to-travel-is-to-live.kro.kr"
 },
 {
     title:"Movie Diary",
