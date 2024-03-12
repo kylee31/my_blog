@@ -104,4 +104,17 @@ print(ord('a')) # 65
   print(int('111',2)) #7
   ```
 
-그 외 변환=> [파이썬 진수변환(2진법, 3진법, 5진법, 10진법)[n진법]](https://velog.io/@code_angler/%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%A7%84%EC%88%98%EB%B3%80%ED%99%982%EC%A7%84%EB%B2%95-3%EC%A7%84%EB%B2%95-5%EC%A7%84%EB%B2%95-10%EC%A7%84%EB%B2%95n%EC%A7%84%EB%B2%95)
+그 외 변환=>
+[파이썬 진수변환(2진법, 3진법, 5진법, 10진법)[n진법]](https://velog.io/@code_angler/%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%A7%84%EC%88%98%EB%B3%80%ED%99%982%EC%A7%84%EB%B2%95-3%EC%A7%84%EB%B2%95-5%EC%A7%84%EB%B2%95-10%EC%A7%84%EB%B2%95n%EC%A7%84%EB%B2%95)<br/>
+[Python 진수 변환, 상세한 설명](https://joyjangs.tistory.com/35)
+
+- 10진법을 N진법으로
+  10진수를 N으로 나눠서 나오는 나머지를 연결하면 된다
+  ```py
+  def formation(num, base):
+    tmp = ''
+    while num:
+        tmp = str(num%base) + tmp #나머지를 역순으로 문자열에 추가
+        num //= base #//은 정수 몫을 반환하는 나누기 연산자
+    return tmp
+  ```
