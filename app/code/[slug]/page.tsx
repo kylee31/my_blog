@@ -19,7 +19,7 @@ export default function DocPage({ params }: Props) {
           <h1 className="text-black font-black text-3xl inline-block mr-4">
             {post.title}
           </h1>
-          <Link href="/learned">◀</Link>
+          <Link href="/code">◀</Link>
         </div>
         <Mdx code={post.body.code} />
       </div>

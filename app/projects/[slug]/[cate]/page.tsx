@@ -3,6 +3,7 @@ import { allProjects } from "contentlayer/generated";
 import Layout from "@/components/Layout";
 import { cateProps } from "@/types/postType";
 import { Mdx } from "@/components/Mdx";
+import Link from "next/link";
 
 export default async function DocPage({ params }: cateProps) {
   const post = await allProjects.find((doc) => doc.slug === params.cate);
@@ -18,7 +19,7 @@ export default async function DocPage({ params }: cateProps) {
           <h1 className="text-black font-black text-3xl inline-block mr-4">
             {post.title}
           </h1>
-          {/* <Link href={`/projects/${params.slug}`}>◀</Link> */}
+          <Link href={`/projects/${params.slug}`}>◀</Link>
         </div>
         <Mdx code={post.body.code} />
       </div>
