@@ -16,7 +16,7 @@ export const cate:cateType[] = [
       title: "Code",
       link: "/code",
       context: "알고리즘 및 코딩테스트 관련 정리글입니다.",
-    },
+    }
   ];
 
 
@@ -33,6 +33,10 @@ const navLinks:navLink[]=[
         title:"code",
         link:"/code"
     },
+    {
+      title:"TIL",
+      link:"/til"
+    }
 ]
 
 export default navLinks

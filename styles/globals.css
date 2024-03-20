@@ -5,13 +5,12 @@
 :root {
 }
 
-body {
-  color: gray;
-  background-color: white;
-}
-
 @layer utilities {
 }
 
 @layer base {
+  body {
+    color: gray;
+    background-color: white;
+  }
 }

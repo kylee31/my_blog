@@ -8,7 +8,7 @@ export default function Home() {
       <div className="relative flex place-items-center">
         <h1 className="mb-10 text-4xl font-extrabold text-black">{`231's Blog`}</h1>
       </div>
-      <Image src="/main.gif" alt="" priority width={400} height={100} />
+      <Image src="/main-resize.webp" alt="" priority width={400} height={100} />
       <div className="relative flex flex-col mt-5 mb-11 place-items-center text-center text-xs text-gray-700">
         <span>결과를 확인할 수 있는 모든 활동을 좋아하는 개발자입니다.</span>
         <span>

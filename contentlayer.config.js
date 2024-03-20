@@ -58,9 +58,26 @@ export const Code = defineDocumentType(() => ({
     }
 }))
 
+export const Til = defineDocumentType(() => ({
+    name: "Til",
+    filePathPattern: `til/*.mdx`,
+    contentType: "mdx",
+    fields: {
+        title: { type: "string", required: true },
+        date: { type: "string", required: true },
+        description: { type: "string", required: true },
+    },
+    computedFields: {
+        slug: {
+            type: "string",
+            resolve: (post) => post._raw.sourceFileName.replace(".mdx", ""),
+        }
+    }
+}))
+
 export default makeSource({
     contentDirPath: "posts",
-    documentTypes: [Learned, Projects, Code],
+    documentTypes: [Learned, Projects, Code, Til],
     mdx: {
         rehypePlugins: [
             rehypeCodeTitles,
