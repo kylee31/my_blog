@@ -18,7 +18,10 @@ export default function Home() {
           지난 기술을 회고하고, 새로운 기술을 습득하며 지식을 채우기 위해
           노력합니다.
         </span>
-        <div className="flex mt-5">
+        <span className="text-custom-xs">
+          (velog에서 231&apos;s blog로 이동 중..🏃‍♂️)
+        </span>
+        <div className="flex mt-4">
           <a
             title="velog에서 231's blog로 이동 중..🏃‍♂️"
             className="mr-3"
