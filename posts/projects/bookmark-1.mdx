@@ -31,6 +31,15 @@ import { authService } from "../fbase";
 export const isLogin = () => !!authService.currentUser;
 ```
 
+Login 시에만 setPersistence로 저장하게 되어있어 새로고침 시 정보가 날아가는 현상이 발생했던 것이다..!
+Firebase 서비스 계정 파일(해당 프로젝트의 fbase.json)에서 setPersistence로 localstorage에 사용자 정보를 저장하도록
+수정하여 오류 해결!
+
+일반적으로 OAuth 2.0을 사용하여 소셜 로그인 기능이 제공되고, Firebase 또한 그러했다.
+
+✅ Firebase 인증 - Authentication 문서 중
+`Firebase 인증은 여타 Firebase 서비스와 긴밀히 연동하고 OAuth 2.0 및 OpenID Connect 등의 산업 표준을 활용하므로 커스텀 백엔드와 쉽게 통합할 수 있습니다.`
+
 <hr />
 
 ### 📌참고자료
