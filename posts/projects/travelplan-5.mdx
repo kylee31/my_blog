@@ -1,0 +1,44 @@
+---
+title: 새로고침 시 로그인 화면 이동 오류
+date: 2024-03-22
+description: Redux, Redux-Thunk로 리팩토링 후 새로고침 시 로그인 페이지로 돌아가는 오류 발생
+cate: travelplan
+---
+
+> 리팩토링에서 놓친 부분 수정 필요.
+
+PrivateRoute 컴포넌트에서 isLogin으로 로그인 여부를 확인하고 페이지 이동하는 코드.
+로그인할 때 access token을 localStorage에 저장하여 로그아웃 시에만 token 정보 삭제하도록 구현.
+
+- 기존
+
+  ```js
+  import { authService } from "../fbase";
+  export const isLogin = () => !!authService.currentUser;
+  ```
+
+위와 같은 코드였지만 새로고침 시 currentUser 정보가 null인 상황이 발생하며 로그인 페이지로 돌아가는 상황 발생.
+
+- 1차 수정
+
+  ```js
+  import { authService } from "../fbase";
+  export const isLogin = () => !!localStorage.getItem("token");
+  ```
+
+1차 수정에서 새로고침 오류는 해결되었으나 새탭에서 열때 데이터를 잃어버리는 현상 발생.
+
+- 2차 수정
+  ```js
+  import { authService } from "../fbase";
+  export const isLogin = () =>
+    !!(localStorage.getItem("token") || authService.currentUser);
+  ```
+
+currentUser 존재하거나 token이 존재할 때 로그인을 유지하도록 수정.
+
+<hr />
+
+### 📌참고자료
+
+[Persisting state on page refresh in React/Redux app](https://dev.to/mihomihouk/persisting-state-on-page-refresh-in-reactredux-app-58cf)

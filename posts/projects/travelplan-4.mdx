@@ -1,0 +1,28 @@
+---
+title: 📝... 외부 API CORS 에러 해결
+date: 2024-03-22
+description: CORS 에러 해결을 위한 방안 선택 및 탐구
+cate: travelplan
+---
+
+> CORS 에러 해결을 위한 방안과 적용 방법, 그 외 방식에 대해 정리해보자
+
+프로젝트에서 2가지 API를 사용한다. Kakao Map API와 공공문화데이터 API를 사용하는데 공공문화데이터 API 사용 시 CORS 에러가
+발생했다.
+
+그 외 방식? NginX 보안 설정 시도했는데 API 충돌로 인해 설정 복귀,
+NginX로 CORS??
+
+<hr />
+
+👩‍💻 SSR, SSG 제공 뿐만 아니라 환경설정 옵션으로 rewrites, redirects를 제공하며 Proxy와 같은 효과를 내주는 것을 적용해보고
+Next.js가 **React 프레임워크**임을 확실히 체감하게 되었다.
+
+<hr />
+
+### 📌참고자료
+
+[Nextjs config, rewrites](https://nextjs.org/docs/pages/api-reference/next-config-js/rewrites)
+[next.js의 rewrite와 redirect](https://velog.io/@deli-ght/nextrewrite%EC%99%80-redirect)
+[Nginx CORS + https 설정 문제 해결하기](https://medium.com/@hee98.09.14/nginx-cors-https-%EC%84%A4%EC%A0%95-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-5af71812f4a1)
+[[Nginx] CORS 설정](https://greeng00se.tistory.com/119)

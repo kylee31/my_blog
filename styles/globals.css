@@ -6,6 +6,10 @@
 }
 
 @layer utilities {
+  .text-custom-xs {
+    font-size: 0.5rem /* 12px */;
+    line-height: 1.5rem /* 16px */;
+  }
 }
 
 @layer base {
