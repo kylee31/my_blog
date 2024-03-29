@@ -1,0 +1,131 @@
+---
+title: Python 자주 사용하는 내장함수, 메서드 정리
+description: 문제 풀이 중 자주 사용되는 내장함수와 메서드 정리
+algorithm: recursion
+---
+
+> 재귀함수 정리
+
+- 1부터 n까지의 합 구하는 재귀함수
+
+  ```py
+    def sum_func(n):
+        #n이 0보다 클 때까지의 합
+        if n>0:
+            return n+sum_func(n-1)
+        #n이 0보다 작거나 같다면 False 반환, 종료
+        else:
+            return False
+  ```
+
+- 순열 (n개 중 m개 선택하기 - 중복 허용)
+
+  ```py
+  n, m = map(int, input().split())
+  arr = []
+
+  def permu():
+      if len(arr) == m:
+          print(" ".join(map(str, arr)))
+          return False
+      for i in range(1, n + 1):
+          arr.append(i)
+          permu()
+          arr.pop()
+
+  permu()
+  ```
+
+- 순열 (n개 중 m개 선택하기 - 중복 비허용)
+
+  ```py
+  n, m = map(int, input().split())
+  arr = []
+
+  def permu():
+      if len(arr) == m:
+          print(" ".join(map(str, arr)))
+          return False
+      for i in range(1, n + 1):
+          if i not in arr:
+              arr.append(i)
+              permu()
+              arr.pop()
+
+  permu()
+  ```
+
+- 조합 (n개 중 m개 선택하기 - 중복 허용)
+
+  ```py
+  n, m = map(int, input().split())
+
+
+  def combi(n, m, start, result):
+      if len(result) == m:
+          print(" ".join(map(str, result)))
+          return 0
+      for i in range(start, n + 1):
+          result.append(i)
+          combi(n, m, i, result)
+          result.pop()
+
+
+  combi(n, m, 1, [])
+  ```
+
+- 조합 (n개 중 m개 선택하기 - 중복 비허용)
+
+  ```py
+  n, m = map(int, input().split())
+
+  def combi(n, m, start, result):
+      if len(result) == m:
+          print(" ".join(map(str, result)))
+          return 0
+      for i in range(start, n + 1):
+          result.append(i)
+          combi(n, m, i+1, result)
+          result.pop()
+
+  combi(n, m, 1, [])
+  ```
+
+- 피보나치 (재귀)
+
+```py
+#테스트1
+def fib(n):
+    #n-1,n-2가 조건이므로 1반환하도록 설정
+    if n == 1 or n == 2:
+        #1이나 2일때 1반환
+        return 1
+    else:
+        return fib(n - 1) + fib(n - 2)
+
+for i in range(2, 6):
+    print(f"fib", fib(i)) #피보나치 5까지
+
+#테스트2
+def fibonacci(n):
+    #n-1,n-2가 되면 0,1반환하도록
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+for i in range(2,6):
+    print(f'fibonacci',fibonacci(i)) #피보나치 5까지하려면 6으로 설정해주어야 함. 1
+
+#테스트3
+def fibo(n):
+    # n-1,n-2가 조건이므로 1반환하도록 설정
+    if n<=2:
+        return n
+    else:
+        return fibo(n - 1) + fibo(n - 2)
+
+for i in range(1, 5):
+    print(f"fibo", fibo(i))  # 피보나치 5까지 반환가능
+
+```
