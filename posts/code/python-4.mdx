@@ -93,39 +93,56 @@ algorithm: recursion
 
 - 피보나치 (재귀)
 
-```py
-#테스트1
-def fib(n):
-    #n-1,n-2가 조건이므로 1반환하도록 설정
-    if n == 1 or n == 2:
-        #1이나 2일때 1반환
-        return 1
-    else:
-        return fib(n - 1) + fib(n - 2)
+  ```py
+  #테스트1
+  def fib(n):
+      #n-1,n-2가 조건이므로 1반환하도록 설정
+      if n == 1 or n == 2:
+          #1이나 2일때 1반환
+          return 1
+      else:
+          return fib(n - 1) + fib(n - 2)
 
-for i in range(2, 6):
-    print(f"fib", fib(i)) #피보나치 5까지
+  for i in range(2, 6):
+      print(f"fib", fib(i)) #피보나치 5까지
 
-#테스트2
-def fibonacci(n):
-    #n-1,n-2가 되면 0,1반환하도록
-    if n <= 1:
-        return n
-    else:
-        return fibonacci(n-1) + fibonacci(n-2)
+  #테스트2
+  def fibonacci(n):
+      #n-1,n-2가 되면 0,1반환하도록
+      if n <= 1:
+          return n
+      else:
+          return fibonacci(n-1) + fibonacci(n-2)
 
-for i in range(2,6):
-    print(f'fibonacci',fibonacci(i)) #피보나치 5까지하려면 6으로 설정해주어야 함. 1
+  for i in range(2,6):
+      print(f'fibonacci',fibonacci(i)) #피보나치 5까지하려면 6으로 설정해주어야 함. 1
 
-#테스트3
-def fibo(n):
-    # n-1,n-2가 조건이므로 1반환하도록 설정
-    if n<=2:
-        return n
-    else:
-        return fibo(n - 1) + fibo(n - 2)
+  #테스트3
+  def fibo(n):
+      # n-1,n-2가 조건이므로 1반환하도록 설정
+      if n<=2:
+          return n
+      else:
+          return fibo(n - 1) + fibo(n - 2)
 
-for i in range(1, 5):
-    print(f"fibo", fibo(i))  # 피보나치 5까지 반환가능
+  for i in range(1, 5):
+      print(f"fibo", fibo(i))  # 피보나치 5까지 반환가능
 
-```
+  ```
+
+- 하노이 탑
+
+  ```py
+  def hanoi(n, start, end, auxiliary):
+      if n == 1:
+          print(f"{start}에서 {end}로 원판 1을 이동")
+          return
+      hanoi(n - 1, start, auxiliary, end)
+      print(f"{start}에서 {end}로 원판 {n}을 이동")
+      hanoi(n - 1, auxiliary, end, start)
+
+
+  # 테스트
+  n = 3  # 원판의 개수
+  hanoi(n, "A", "C", "B")  # A 기둥에서 C 기둥으로 이동
+  ```
