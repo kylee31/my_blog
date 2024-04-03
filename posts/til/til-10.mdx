@@ -1,3 +1,9 @@
+---
+title: TIL 11
+date: 2024-04-02
+description: 알고리즘 1주차, 6일
+---
+
 #### 3시간 4문제 코딩 테스트
 
 배열(이중)에 관한 백준 문제 4개가 출제되었다. 3시간 동안 총 3문제 풀었다.
@@ -88,26 +94,26 @@ for i in range(0, num, 20):
 **-** split(':')하면 ::으로 줄인 부분이 2개가 된다. done으로 한번만 0000을 추가하도록 만들었는데
 가독성도 떨어지고 좋은 코드는 아닌 것 같다 (어떻게 바꿀까?)
 
-```py
-ip = input()
-ip_group = ip.split(":")
-result = ""
-group_num = 0
-for info in ip_group:
-    if "" != info:
-        group_num += 1
-zero_group = 8 - group_num
-done = 1
-for info in ip_group:
-    if "" != info:
-        zero = 4 - len(info)
-        result += "0" * zero + info + ":"
-    else:
-        if done:
-            result += "0000:" * zero_group
-            done = 0
-print(result[:39])
-```
+    ```py
+    ip = input()
+    ip_group = ip.split(":")
+    result = ""
+    group_num = 0
+    for info in ip_group:
+        if "" != info:
+            group_num += 1
+    zero_group = 8 - group_num
+    done = 1
+    for info in ip_group:
+        if "" != info:
+            zero = 4 - len(info)
+            result += "0" * zero + info + ":"
+        else:
+            if done:
+                result += "0000:" * zero_group
+                done = 0
+    print(result[:39])
+    ```
 
 - 정답 코드 (참고)
 
@@ -141,3 +147,7 @@ print(result[:39])
 피드백 받고서 수정할 시간이 없었다. 문제점을 정확히 알았으니 최대한 제시해주신 방향으로 수정해야 한다.
 그동안 열심히 한다고 했던 프로젝트가 정리해놓고 보니 많이.. 하찮아서ㅜㅜ..
 프로젝트 주차에서 기술적인 역량을 키우고 싶다. (특히 테스트 코드! 궁금)
+
+#### 디버깅도 능력이다..
+
+chatGPT 잘 활용하는 것도 능력이 될 것 같다.. 엣지케이스 생각하는 것도 능력.. console.log 찍어보는 조건..

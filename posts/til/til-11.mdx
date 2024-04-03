@@ -1,0 +1,41 @@
+---
+title: TIL 12
+date: 2024-04-03
+description: 알고리즘 2주차, 1일
+---
+
+#### 스택, 큐, 덱
+
+기본 자료구조. 파이썬 사용 시 deque 내장 라이브러리 활용해서 원형 큐 구현 가능.
+
+- popleft로 맨 앞 요소 제거 가능
+
+```
+from collections import deque
+arr=deque([1,2,3])
+#큐 구현
+arr.appendleft(4)
+arr.popleft()
+arr.append(5)
+arr.pop()
+#스택 구현
+arr.append(6)
+arr.pop()
+```
+
+예전에 알고리즘 문제를 풀 때 스택으로 해결할 수 있는 문제가 많이 나오는 것 같다고 느꼈다.
+(스택은 FILO, 큐는 FIFO, 덱은 양 끝에서 IO 가능)
+
+#### 1~6번 문제
+
+여섯 문제 중 6번! 좋은 문제 ([백준 - 오큰수](https://www.acmicpc.net/problem/17298)) 7,8번 특히 8번은 구현이 들어간 문제로 굳이 풀지 않아도 다른 문제를 더 풀어보는 것을 추천해주셨다.
+
+- [백준 - 오등큰수](https://www.acmicpc.net/problem/17299)
+- [백준 - 스카이라인 쉬운거](https://www.acmicpc.net/problem/1863)
+
+1~6번 문제 정리하고 추가 문제 주신거 풀어보기. 기본 문제도 구글링하면서 겨우 학습하고 푸는데ㅠㅠ 하루가 너무 부족하다ㅜㅜ..
+
+#### nextstep
+
+https://edu.nextstep.camp
+(개발자로서 성장하기 위해 참여하면 좋은 강의들)
