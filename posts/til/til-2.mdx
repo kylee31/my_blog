@@ -1,21 +1,360 @@
 ---
 title: TIL 2
-date: 2024-03-21
-description: 이력서 1주차, 2일
+date: 2024-03-27
+description: 알고리즘 1주차, 1일~6일
 ---
 
-> 이력서 작성하면서 프로젝트 수정사항 발견하여 해당 프로젝트 기능 수정 진행
+### 03/27
+
+> 영화일기, 북마크 프로젝트 수정 완료, 이력서 내용 정리 완료
+> 포트폴리오 자료 첨부 수정 및 블로그 작성
+
+### TIL
+
+- 포트폴리오 사진 및 링크 추가하여 설명 수정사항
+- 이력서 내용 명확하게 정리하기2 (필요없는 내용 삭제하기)
+- readme 새로 작성하기 (3/27 4개 중 1개 완료하기)
 
 <hr />
 
-**TIL**
-
-- Book Mark 소셜 로그인 Token 저장 오류 수정(구현) 마치기
-  [React, redux-persist - 새로고침 후에도 store state 유지하기 (with typescript)](https://velog.io/@nemo/redux-persist)
-  [redux-persist 적용 (feat. react, redux-toolkit)](https://trustmitt.tistory.com/70)
-  [react-query(v4) - persistQueryClient 플러그인](https://velog.io/@hwisaac/react-queryv4-persistQueryClient-%ED%94%8C%EB%9F%AC%EA%B7%B8%EC%9D%B8)
+👩‍💻 프로젝트 수정 부분 모두 완료. 블로그 글로 한번 더 정리하기
 
 <hr />
 
-👩‍💻 이력서 작성하며 이전 프로젝트에서 리팩토링하며 Token 사용 부분을 제대로 구현해주지 못했음을 알게 되었다.
-(왜일까..? 분명 Redux로 리팩토링하며 누락된 부분이 발생한 것 같다..😢)
+### 03/28
+
+> 포트폴리오 자료 첨부 수정 및 블로그 작성 중
+> readme 4개 중 1개(blog) 완료하기
+
+### TIL
+
+- 포트폴리오 사진 및 링크 추가하여 설명 수정사항
+- 이력서 내용 명확하게 정리하기2 (필요없는 내용 삭제하기)
+- readme 새로 작성하기 (3/28 4개 중 1개 완료하기)
+
+<hr />
+
+👩‍💻 블로그 글 작성 중.. readme 양식 지정 완료
+
+<hr />
+
+#### 📌참고자료
+
+[readme 참고 velog](https://velog.io/@luna7182/%EB%B0%B1%EC%97%94%EB%93%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-README-%EC%93%B0%EB%8A%94-%EB%B2%95)
+[readme 참고 레포](https://github.com/Voluntain-SKKU/Voluntain-2nd)
+
+<hr />
+
+### 03/29
+
+> 포트폴리오 자료 첨부 수정 및 블로그 작성 중
+> readme 4개 중 1개(blog) 완료하기
+
+### TIL
+
+- 과제(재귀) 학습하기
+- 블로그 게시글 작성하기
+
+<hr />
+
+👩‍💻 블로그 글 작성 중..
+
+<hr />
+
+#### 📌참고자료
+
+[readme 참고 velog](https://velog.io/@luna7182/%EB%B0%B1%EC%97%94%EB%93%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-README-%EC%93%B0%EB%8A%94-%EB%B2%95)
+[readme 참고 레포](https://github.com/Voluntain-SKKU/Voluntain-2nd)
+
+### 03/30
+
+### TIL 9
+
+#### 재귀 함수 연습하기
+
+기술 매니저님께서 합을 구하는 함수, 팩토리얼, 피보나치, 하노이탑과 같은 문제를 재귀 함수로 구현해보는 연습을 해보라고 하셔서 연습해보았다. 로직을 구현하면서 이해했던 부분을 다시 설명하려고 하니 잘 이해가 되지 않는 부분도 생겼다.
+
+(아래는 Python으로 작성한 코드)
+▶ 파이썬은 이전 스타트업 근무에서도 초반에 잠깐 사용하게 되었던 일이 있어서, 알고리즘을 파이썬으로 학습하는 게 좋은 방법이라고 생각이 들었다. 기술 매니저님께서도 비슷한 맥락으로 파이썬도 계속 다뤄보는 게 좋다고 말씀해주셨다. 언제 어디서 쓰일지 모르는 언어같다.. 또 아무래도 자바스크립트보다는 알고리즘 학습에 훨씬 적합한 언어이다.
+
+```py
+#1~n까지의 합
+def sum_func(n):
+    if n < 1:
+        return
+    return n + sum_func(n - 1)
+```
+
+```py
+#순열 (n개의 숫자 중 m개 순서대로 고르기, 중복 포함)
+n, m = map(int, input().split())
+arr = []
+
+def permu():
+    if len(arr) == m:
+        print(" ".join(map(str, arr)))
+        return
+    for i in range(1, n + 1):
+    	#중복 포함하지 않으려면 조건 추가 not int
+        #if i not in arr:
+        arr.append(i)
+        permu()
+        arr.pop()
+
+permu()
+```
+
+```py
+#조합 (n개의 숫자 중 m개 조합, 중복 포함)
+n, m = map(int, input().split())
+
+def combi(n, m, start, result):
+    if len(result) == m:
+        print(" ".join(map(str, result)))
+        return
+    #중복 포함하지 않으려면 i+1로 조건 변경하기
+    for i in range(start, n + 1):
+        result.append(i)
+        combi(n, m, i, result)
+        result.pop()
+
+combi(n, m, 1, [])
+```
+
+#### 테스트 코드, 조건 생각하기
+
+- [백준 - 끝말잇기](https://www.acmicpc.net/problem/28432)
+- 입력이 1개일때, 맨 앞, 맨 뒤, 그 외 조건을 생각해야 하는 문제
+- [백준 - 팰린드롬 만들기](https://www.acmicpc.net/problem/1213)
+- 총 개수가 홀수인 알파벳이 2개 이상일 때, 1개 일때, 없을 때 조건을 생각해야 하는 문제
+
+실무에서는 테스트 코드를 작성하여 여러 상황을 테스트하고 검사한다고 하셨다. 알고리즘 문제는 예제를 주고 정답/오답으로 결과를 알려주는데 실무에서는 비즈니스에 적용한 코드가 오류가 나면 답을 알려주지 않으니..😅 꼭 필요하다고 하셨다.
+알고리즘 문제에 테스트 코드를 적용하긴 어려우니 주어진 조건을 보고 발생할 예외 상황(엣지 케이스)을 고려해보고 처리해주는게 좋다고 하셨다. 이후 주차에서 프로젝트 진행 시 테스트 코드 작성하는 과정을 보고 합류를 결심하기도 했던 과정이 있어서 더 와닿았다.
+
+#### 작성한 코드 논리적으로 설명하는 연습하기
+
+[백준 - 추월](https://www.acmicpc.net/problem/2002)
+오늘 문제였던 추월에 대해 작성한 코드를 간단히 설명하게 되었는데 생각을 말로 풀어내기 어려웠다. 문제를 이해하고 적용한 과정을 최대한 상대가 이해하기 쉽게 정리해서 말로 표현하는 연습이 필요하다고 느꼈다. 조금 다른 문제이지만 CS 지식도 알고 있는 것과 설명하는 건 다르다고 생각했다.
+
+<hr />
+
+### 04/01
+
+### 이중배열 관련 문제
+
+오늘 스터디할 코드로 이중 배열에 관한 문제가 출제되었다. 이중 배열은 구현 부분에서 자주 헷갈리는 것 같다.
+주로 인덱스 값을 조작하여 원하는 결과를 얻어야 하므로 그림을 그리거나 일부 값을 출력해보는 편이 문제 풀이에 도움이 되었다.
+머리로만 생각하다보면 잘못된 방향으로 가는 일이 많다😥
+
+#### 중복되는 부분 함수로 만들기
+
+[백준 - 누울 자리를 찾아라](https://www.acmicpc.net/problem/1652)
+문제에서 이중 배열의 행,열을 변경하여 검사하는 로직을 구현했는데, 중복되는 부분이 발생했다.
+따라서 해당 코드를 함수로 만들어 매개변수로 배열을 받아 결과를 출력하도록 리팩토링하였다. (괜찮은 코드인진 모르겠다)
+
+```py
+N = int(input())
+room_wid, room_hei = [input() for _ in range(N)], []  # 가로방, 세로방
+
+for i in range(N):
+    result = ""
+    for j in range(N):
+        result += room_wid[j][i]
+    room_hei.append(result)
+
+def check_sleep(room):
+    can_sleep = 0
+    for idx, line in enumerate(room):
+        space = line.split("X")
+        for box in space:
+            if len(box) >= 2:
+                can_sleep += 1
+    return can_sleep
+
+wid, hei = check_sleep(room_wid), check_sleep(room_hei)
+print(wid, hei)
+```
+
+#### 4일차 문제
+
+[백준 - IOIOI](https://www.acmicpc.net/problem/5525)
+부분 점수를 얻었던 문제이다. N ≤ 100, M ≤ 10000 조건에 한해서만 통과되는 코드였다.
+(짜면서도 부분 점수일걸 알았다.. 1 ≤ N ≤ 1,000,000 / 2N+1 ≤ M ≤ 1,000,000조건에서는 시간복잡도가 어마어마해진다..)
+
+```py
+n = int(input())
+m = int(input())
+s = input()
+count, idx, result = 0, 0, 0
+while idx < (m-1):
+    if s[idx:idx+3] == 'IOI':
+        idx += 2
+        count += 1
+        if count == n:
+            result += 1
+            count -=1
+    else:
+        idx += 1
+        count = 0
+
+print(result)
+```
+
+팀원 분의 코드를 참고하여 학습했다. (IOI가 반복되는 문자열이므로 패턴을 이용하여 검사하는 방식)
+
+#### 이력서 내용 수정하기
+
+이력서 코칭 피드백을 받았다. 분명 어딘가 수정하고 싶은데 문제점을 정확히 찾지 못해 답답했는데,
+확히 짚어주셔서 수정할 부분을 알게 되었다. (문제점을 알았을 뿐 개선을 어떻게 해야할지는 막막하다..😥)
+
+<hr/>
+
+### 04/02
+
+#### 3시간 4문제 코딩 테스트
+
+배열(이중)에 관한 백준 문제 4개가 출제되었다. 3시간 동안 총 3문제 풀었다.
+1번에서 헤매다가 2번은 포기, 3,4번을 선택해서 (좀.. 엉망진창으로..🙃) 제출했다.
+
+#### 배열 기본 지식
+
+- 수학에서 사용하는 xy축 개념과 개발에서 쓰이는 축 개념은 다르다. (2차원 좌표계라고 가정할 때)
+
+  ```py
+  arr=[
+      [1,2,3,4],
+      [5,6,7,8],
+      [9,10,11,12]
+  ]
+  #arr[i][j]에서 i가 x축, j가 y축
+  ```
+
+  x는 아래로, y는 옆으로 나아가는 형식이다.
+
+- DFS에서 주로 사용되는 단축어
+  ✔ nx,ny는 next를 축약한 변수명으로 다음에 사용될 x,y 값을 나타냄
+  ✔ dx,dy는 변화량으로 x,y가 변하는 값을 나타냄
+
+#### 좋은 문제!
+
+[백준 - 스위치 켜고 끄기](https://www.acmicpc.net/problem/1244)
+[백준 - IPv6](https://www.acmicpc.net/problem/3107)
+
+기술 매니저님께서 1,3번 문제가 현업에서도 쓰일만한 좋은 문제 유형이라고 하셨다.
+해당 문제를 다시 정리해서 깔끔하게 풀어봐야겠다. (아래는 제출 후 일부 수정한 코드)
+
+**-** bool로 감싸주지 않아도 0,1이므로 True,False 검사 가능
+**-** 20씩 잘라서 프린트하는 방법 잊지 말기! (for문은 n개만큼 반복할 수 있다)
+
+```py
+num = int(input())  # 스위치 개수
+switch = list(map(int, input().split()))  # 스위치 정보
+stu_num = int(input())  # 학생 수
+stu_info = [list(map(int, input().split())) for _ in range(stu_num)]  # 성별,스위치 번호
+for info in stu_info:
+    s, n = info
+    if s == 1:
+        for i in range(num):
+            if (i + 1) % n == 0:
+                switch[i] = 0 if bool(switch[i]) else 1
+    else:
+        switch[n - 1] = 0 if bool(switch[n - 1]) else 1
+        prev, next = n - 2, n
+        while prev >= 0 and next < num and switch[prev] == switch[next]:
+            switch[prev] = 0 if bool(switch[prev]) else 1
+            switch[next] = 0 if bool(switch[next]) else 1
+            prev -= 1
+            next += 1
+for i in range(0, num, 20):
+    print(" ".join(map(str, switch[i : i + 20])))
+```
+
+- 정답 코드 (참고)
+
+  ```py
+  n = int(input())
+  # 제일 앞 인덱스를 1로 하기 위해 앞에 0을 추가할게요.
+  arr = [0] + list(map(int, input().split()))
+
+  m = int(input())
+  for _ in range(m):
+      gender, num = map(int, input().split())
+      if gender == 1: # 남학생일때
+          for i in range(num, n + 1, num): # num, 2*num, 3*num, ...
+              arr[i] = 1 - arr[i]
+      elif gender == 2: # 여학생일때
+          arr[num] = 1 - arr[num] # 일단 자기 자신은 뒤집어줍니다.
+          for i in range(1, n):
+              if num - i < 1 or num + i > n: # 범위를 벗어나면 break
+                  break
+              if arr[num - i] == arr[num + i]:
+                  arr[num - i] = 1 - arr[num - i]
+                  arr[num + i] = 1 - arr[num + i]
+              else:
+                  break # 대칭이 깨지면 break
+
+  # 제일 앞 인덱스를 1로 하기 위해 앞에 0을 추가했으니 1부터 출력할게요.
+  for i in range(1, n, 20):
+      print(*arr[i:i+20])
+  ```
+
+**-** split(':')하면 ::으로 줄인 부분이 2개가 된다. done으로 한번만 0000을 추가하도록 만들었는데
+가독성도 떨어지고 좋은 코드는 아닌 것 같다 (어떻게 바꿀까?)
+
+    ```py
+    ip = input()
+    ip_group = ip.split(":")
+    result = ""
+    group_num = 0
+    for info in ip_group:
+        if "" != info:
+            group_num += 1
+    zero_group = 8 - group_num
+    done = 1
+    for info in ip_group:
+        if "" != info:
+            zero = 4 - len(info)
+            result += "0" * zero + info + ":"
+        else:
+            if done:
+                result += "0000:" * zero_group
+                done = 0
+    print(result[:39])
+    ```
+
+- 정답 코드 (참고)
+
+  ```py
+  line = input()
+
+  # 나중에 0000을 두 번 추가하지 않기 위해, 맨 앞과 뒤에 필요한 경우 미리 0000 추가하기
+  if line[0] == ":":
+      line = "0000" + line
+  if line[-1] == ":":
+      line = line + "0000"
+
+  # :로 split한 후, 각각의 문자열을 4자리로 만들어 줄게요.
+  a = line.split(":")
+  k = len(a)
+  ans = []
+  for c in a:
+      # 빈 문자열인 경우 0000을 넣어주기
+      if c == "":
+          # 전체 길이가 8이 되도록 0000을 넣어줘요.
+          for i in range(8 - k + 1):
+              ans.append("0000")
+      else:
+          # 문자열의 길이가 4가 되도록 앞에 0을 넣어줘요.
+          ans.append("0" * (4 - len(c)) + c)
+  print(":".join(ans))
+  ```
+
+#### 이력서(프로젝트, 자기소개) 수정하기
+
+피드백 받고서 수정할 시간이 없었다. 문제점을 정확히 알았으니 최대한 제시해주신 방향으로 수정해야 한다.
+그동안 열심히 한다고 했던 프로젝트가 정리해놓고 보니 많이.. 하찮아서ㅜㅜ..
+프로젝트 주차에서 기술적인 역량을 키우고 싶다. (특히 테스트 코드! 궁금)
+
+#### 디버깅도 능력이다..
+
+chatGPT 잘 활용하는 것도 능력이 될 것 같다.. 엣지케이스 생각하는 것도 능력.. console.log 찍어보는 조건..
