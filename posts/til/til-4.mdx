@@ -1,0 +1,108 @@
+---
+title: TIL 4
+date: 2024-04-10
+description: 알고리즘 3주차, 1일~6일
+---
+
+### 04/10
+
+#### 최소 신장 트리(최소 스패닝 트리)
+
+- 최소 스패닝 트리 풀이 익히기
+  스패닝 트리(=사이클이 없는 부분 그래프)
+  어떤 그래프(트리가 아니어도 됨)가 있고, 그 그래프의 모든 정점을 지나는 트리 => 스패닝 트리(신장 트리)
+- 가중치 합을 최소로 하는 스패닝 트리=최소 스패닝 트리
+
+**📌참고자료**
+
+[백준 #1197 최소 스패닝 트리 (파이썬) : 크루스칼 알고리즘](https://velog.io/@yoopark/baekjoon-1197)
+[백준 1197. 최소 스패닝 트리 (파이썬- 크루스칼 알고리즘)](https://velog.io/@ppm_vely/%EB%B0%B1%EC%A4%80-1197.-%EC%B5%9C%EC%86%8C-%EC%8A%A4%ED%8C%A8%EB%8B%9D-%ED%8A%B8%EB%A6%AC-%ED%8C%8C%EC%9D%B4%EC%8D%AC-%ED%81%AC%EB%A3%A8%EC%8A%A4%EC%B9%BC-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98)
+
+#### 크루스칼 알고리즘
+
+1. 모든 간선 가중치 오름차순으로 정렬
+2. 가중치 가장 낮은 간선부터 순회
+3. 이 간선이 추가된다면 사이클 발생시키는지 확인
+   이전 노드와 같은 집합이 아닌지(이전 노드와 연결되어 있지 않은지) 확인하는 것
+   1. 사이클 발생시키면 continue
+   2. 사이클 발생시키지 않으면 간선 추가
+4. 모든 간선 돌았을때 추가된 간선이 최소 신장 트리
+
+```py
+import sys
+input = sys.stdin.readline
+
+# kruskal algorithm
+
+# union-find
+#해당 노드의 root node를 반환하는 함수
+def find_parent(x):
+    if parent[x] != x:
+        # get_parent 거슬러 올라가면서 parent[x] 값도 갱신
+        parent[x] = find_parent(parent[x])
+    return parent[x]
+
+#두 노드를 연결해주는 함수
+def union_parent(a, b):
+    a = find_parent(a)
+    b = find_parent(b)
+    if a < b:  # 작은 쪽이 부모가 된다. (한 집합 관계라서 부모가 따로 있는 건 아님)
+        parent[b] = a
+    else:
+        parent[a] = b
+
+V, E = map(int, input().split())
+parent = [i for i in range(V + 1)]
+edges = []
+result = 0
+
+# 간선 정보 입력하기
+for _ in range(E):
+    A, B, C = map(int, input().split())
+    edges.append((C, A, B))
+
+edges.sort()
+
+for cost, a, b in edges:
+    # cost가 작은 edge부터 하나씩 추가해가면서 같은 부모를 공유하지 않을 때(사이클 없을 때)만 확정
+    if find_parent(a) != find_parent(b):
+        union_parent(a, b)
+        result += cost
+
+print(result)
+```
+
+#### union-find 알고리즘
+
+같은 집합 내 원소인지(=공통의 부모 원소를 갖는지)
+
+```py
+# union-find
+#해당 노드의 root node를 반환하는 함수
+def find_parent(x):
+    if parent[x] != x:
+        # get_parent 거슬러 올라가면서 parent[x] 값도 갱신
+        parent[x] = find_parent(parent[x])
+    return parent[x]
+
+#두 노드를 연결해주는 함수
+def union_parent(a, b):
+    a = find_parent(a)
+    b = find_parent(b)
+    if a < b:  # 작은 쪽이 부모가 된다. (한 집합 관계라서 부모가 따로 있는 건 아님)
+        parent[b] = a
+    else:
+        parent[a] = b
+```
+
+![](https://velog.velcdn.com/images/kylee31/post/55e466ac-1340-482f-9c83-d0e88a973cc7/image.png)
+
+즉, 1과 2가 연결되었을 때 이를 표현하기 위해 인덱스 요소를 더 작은 쪽 숫자로 변경해주면(합쳐주게 되는 것이) union되는 것이다.
+
+![](https://velog.velcdn.com/images/kylee31/post/c2e5f2f6-8139-41f2-b08b-95edfacadeb0/image.png)
+
+연결성을 모두 나타내기 위해 부모 노드를 타고 이동하여 인덱스값과 요소값이 같은 곳이 바로
+
+#### 복습 문제
+
+stack, 이분 탐색, 누적 합, bfs 문제 복습!
