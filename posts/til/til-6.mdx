@@ -1,0 +1,398 @@
+---
+title: TIL 6
+date: 2024-04-26
+description: 프로젝트 2주차, 1일~6일
+---
+
+### 04/26
+
+✅ 오늘의 멘토링 요약
+
+1. 클로저 개념을 useState를 이해하면서 알아보자.
+2. 브라우저 렌더링 상세 과정 키워드로 익혀가기 (리플로우,리렌더링,defer ..)
+3. 컴포넌트 리렌더링이 어떤 상황에서 일어나는지 (자기 자신의 state 변경, 부모 컴포넌트 변경, props 변경 ..) 알기
+4. 개발자 도구 잘 활용하기
+5. context api 최적화 이슈 생각해보기 (feat. 상태 관리 라이브러리)
+
+오늘 멘토링에서 좋은 고민거리와 주제가 나와서 정리한다. 지난번 멘토링에서 비즈니스 로직과 뷰 로직을 분리하는 것이 정말
+중요하다고 하셨는데, login form을 예로 들어주셨다.
+
+#### 뷰와 비지니스 로직(훅) 분리 예시
+
+```js
+//비지니스 로직
+const useLoginForm() {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoggedin, setIsLoggedIn] = useState(false);
+
+    const handleLogin = () => {
+        // API 로그인 요청을 처리합니다.
+        // 예시로, 정적 검사만 포함하였습니다.
+        if (username === 'user' && password === 'pass') {
+            setIsLoggedIn(true);
+        } else {
+            alert('Invalid credentials');
+        }
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault(); // 폼이 실제로 제출되는 것을 방지합니다.
+        handleLogin(); // 로그인 처리 함수를 호출합니다.
+    };
+
+		return {
+			username,
+			password,
+            handleSubmit
+			...
+		}
+}
+```
+
+```js
+//뷰 로직
+import React from 'react';
+
+function LoginForm() {
+    const { username, password, handleSubmit... } = useLoginForm()
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="text" value={username} onChange={handleUsernameChange} placeholder="Username" />
+            <input type="password" value={password} onChange={handlePasswordChange} placeholder="Password" />
+            <button type="submit">Login</button>
+            {isLoggedIn && <p>Logged in!</p>}
+        </form>
+    );
+}
+```
+
+위의 예제를 보면 login을 입력받아 버튼으로 submit시 handleSubmit 실행 -> 이 부분을 모두 Hook으로 만들어서 비즈니스 로직을
+뺴낸다. 이렇게 되면 비즈니스는 훅에서, 뷰는 해당 컴포넌트에서만 작성되어 있으므로 좋은 로직이라고 할 수 있다.
+
+현재 진행하는 프로젝트에서도 form을 따로 빼두기는 했지만, form 내부에서 사용되는 비즈니스 로직 처리가 부족하다는 걸 느꼈다.
+또 form을 사용하는 뷰 로직 컴포넌트에서 onSubmit으로 비즈니스 로직이 일부 포함되어 있어 이 부분을 더 깔끔히 정리해야겠다.
+
+```js:updateProduct.tsx
+
+//페이지 컴포넌트
+import ProductForm from "@/components/product/ProductForm";
+import { db } from "@/firebase";
+import useGetProductInfo from "@/hooks/useGetProductInfo";
+import downloadUrl from "@/lib/downloadUrl";
+import { productInputs } from "@/types/ProductType";
+import { doc, updateDoc } from "firebase/firestore";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+
+const UpdateProduct = () => {
+  const productId = useParams().id!;
+  const nowDate = new Date();
+  const { handleSubmit, register, setValue } = useForm<productInputs>();
+  const [isUploading, setIsUploading] = useState(false);
+  const { productInfo } = useGetProductInfo(productId);
+  const navigate = useNavigate();
+
+    //빼주면 좋을 함수(hook으로)
+  const onSubmit: SubmitHandler<productInputs> = async (data, event) => {
+    const {
+      productName,
+      productCategory,
+      productDescription,
+      productImages,
+      productPrice,
+      productQunatity,
+    } = data;
+
+    const isEditImgs = Boolean(productImages);
+    const urls: string[] = [];
+
+    if (isEditImgs) {
+      // 저장한 각 이미지의 다운로드 url 추가, 이미 다운로드 url로 변환된 파일이면 그대로 추가하기
+      for (let idx = 0; idx < productImages.length; idx++) {
+        const img = productImages[idx];
+        if (img.includes("blob")) {
+          const url = await downloadUrl({ img, idx, productId });
+          urls.push(url);
+        } else {
+          urls.push(img);
+        }
+      }
+    }
+
+    if (productInfo) {
+      const productRef = doc(db, "product", productId);
+      const newProductInfo: productInputs = {
+        productName,
+        productCategory,
+        productPrice,
+        productQunatity,
+        productDescription,
+        //편집된게 있으면 수정한 url정보로, 그대로라면 기존 imgs 정보 세팅
+        productImages: isEditImgs ? urls : productInfo.productImages,
+        updatedAt: nowDate,
+      };
+
+      const uploadImgsLength = isEditImgs
+        ? urls.length
+        : productInfo.productImages;
+
+      if (uploadImgsLength == 0) {
+        return;
+      } else {
+        setIsUploading(true);
+        event?.preventDefault();
+      }
+      await updateDoc(productRef, newProductInfo).then(() => {
+        navigate("/seller", { replace: true });
+      });
+    }
+  };
+  return (
+    <ProductForm
+      isUpdate={true}
+      updateProduct={productInfo}
+      handleSubmit={handleSubmit}
+      onSubmit={onSubmit}
+      register={register}
+      setValue={setValue}
+      isUploading={isUploading}
+    />
+  );
+};
+
+export default UpdateProduct;
+```
+
+```js:Form.tsx
+//뷰 로직이지만, 내부에서 비즈니스 로직이 사용된다 (분리..?)
+const ProductForm = ({
+  handleSubmit,
+  onSubmit,
+  updateProduct,
+  register,
+  setValue,
+  isUpdate,
+  isUploading,
+}: {
+  handleSubmit: UseFormHandleSubmit<productInputs, undefined>;
+  onSubmit: SubmitHandler<productInputs>;
+  updateProduct?: DocumentData;
+  register: UseFormRegister<productInputs>;
+  setValue: UseFormSetValue<productInputs>;
+  isUploading: boolean;
+  isUpdate: boolean;
+}) => {
+  const [images, setImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (updateProduct) {
+      setImages(updateProduct.productImages);
+      setValue("productCategory", updateProduct.productCategory);
+    }
+  }, [updateProduct]);
+
+  //TODO: 동일 파일 연속으로 등록 불가한 사항 수정하기(input값에 cache되어있음?)
+  const handleSaveImage = async (e: React.ChangeEvent) => {
+    const targetFiles = (e.target as HTMLInputElement).files as FileList;
+    const targetFilesArray = Array.from(targetFiles);
+    const selectedFiles: string[] = targetFilesArray.map((file) => {
+      return URL.createObjectURL(file);
+    });
+    const maxAllowFiles = 4;
+    if (targetFilesArray.length + images.length > maxAllowFiles) {
+      return;
+    }
+
+    setImages((img) => [...img, ...selectedFiles]);
+    setValue("productImages", [...images, ...selectedFiles]);
+  };
+
+  const handleRemoveImage = (idx: number) => {
+    const filterImages = images.filter((_, index) => index != idx);
+    setImages(filterImages);
+    setValue("productImages", filterImages);
+  };
+
+  const handleCategoryChange = (ele: string) => {
+    setValue("productCategory", ele);
+  };
+
+  const handlePreventEvent = (e: React.MouseEvent) => {
+    if (updateProduct) {
+      if (isUploading) {
+        e.preventDefault();
+      }
+    } else {
+      if (isUploading && images.length > 0) {
+        e.preventDefault();
+      }
+    }
+  };
+  if (updateProduct == undefined && isUpdate) {
+    return <></>;
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full h-full flex flex-col justify-center items-center"
+    >
+      {/*생략*/}
+      <Button className="w-full" type="submit" onClick={handlePreventEvent}>
+        {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        저장
+      </Button>
+    </form>
+  );
+};
+
+export default ProductForm;
+```
+
+그래도 내가 작성한 코드가 좋은 예시와 유사해서 기분이 좋다!! 부족한 점도 많지만 잘한 부분은 스스로 칭찬해주자..!
+
+#### 생각해보기
+
+useInfiniteQuery를 사용하면서 useInView 훅으로 컴포넌트를 관찰하고 ref 값으로 전달해주었는데, 각각의 컴포넌트에서
+모두 ref가 적용될 것 같았으나 마지막 컴포넌트만 적용되었다.
+
+#### Context API
+
+- [Context API 성능 이슈, 리렌더링 생각해보기](https://velog.io/@ckstn0777/Context-API%EC%9D%98-%EC%B5%9C%EB%8C%80-%EB%8B%A8%EC%A0%90%EC%9D%80-%EB%AC%B4%EC%97%87%EC%9D%BC%EA%B9%8C)
+  현재 프로젝트에서는 Context API를 전역 상태 공유로만 사용했다. (로그인 유무, 로그인 시 받아온 모든 데이터 공유)
+
+그러나 장바구니 기능을 구현하면서 깊은 고민없이 권장 기술인 Context API를 사용하려고 했지만,
+불필요한 리렌더링이 일어날것 같다(맨 상단에서 children을 감싸주기 때문에..! Context API의 성능 이슈는 유명하다)는
+팀원 분의 의견을 들었고 생각해봐야 할 문제라고 생각했다.
+
+#### 클로저 (with useState)
+
+> 클로저란 함수와 함수가 선언된 렉시컬 스코프의 조합이다. 같은 어휘적 환경에 있는 변수에 접근할 수 있고, 사용할 수 있다면 그 변수의 환경을 기억하고 있기 때문.
+> 함수의 실행이 끝났어도 함수가 선언된 환경을 기억할 수 있는 방법이 클로저이다.
+> 리렌더링 되어도 useState의 변수가 초기값으로 초기화되지 않고 함수가 종료되어도 필요할 때 마다 state로 꺼내 쓸 수 있는건 클로저를 이용해 구현되었을 것으로 짐작할 수 있다.
+
+### 04/29
+
+- 이미지 최적화
+
+  이미지를 보여주는건 css로 처리하는 건 맞다. 큰 이미지를 처리해서 AWS 기준 s3 스토리지에 저장하는데, storage 저장 전에 들러서
+  어떤 사이즈에 맞게 리사이징하도록 람다를 사용해서 저장하고 변환하는 로직을 많이 사용하긴 한다.
+
+- firebase 이미지 최적화 browser image compression 클라이언트에서 압축하는 라이브러리가 꽤 있다. 이거 사용해서 로컬에서 이미지 바꾸는 거 비교해서~)
+
+- 정적 이미지 최적화가 중요한 이유: 자바스크립트로만 작성하는데, 사진 하나, 폰트 하나만 해도 자바스크립트 파일 용량을 넘어가버림,
+  네트워크 리소스는 정적 이미지 정적 파일들인 것이라 최적화가 중요하다고 할 수 있음, 기능 구현 후에 심화 구현 보충에서 정적 파일 최적화
+  별도의 처리는 필요없고, 썸네일용 이미지를 따로 저장하지 않을까? (이런 것도 최적화 경험이 될 듯)
+
+- 성능 최적화 (렌더링)
+
+  react.memo, useCallback, 예를 들어 form 컴폰넡를 만들는데, 별도 처리 없이 하면 폼 입력 시 사진이 계속 리렌더링이 됨,
+  이럴때 어떻게 처리해야 하는지? => 사진 그대로 두고 입력 폼만 바뀌게 하려면? url이 바뀌지 않는 한
+  리렌더링이 일어나지 않았으면! memo를 사용하면 props를 비교해서 props가 변경되지 않는한, 리렌더링 되지 않음
+  useCallback, dependency가 같으면 같은 값 반환 memo랑 같이 쓸때 빛을 발함.
+
+  리렌더링이 부모 컴포넌트함수가 다시 읽히므로 state 제외 함수객체가 달라지므로 리렌더링이 일어남. 부모로부터 함수를 받을 때 리렌더링을 방지하는 것
+  useMemo, 엄청 복잡한 값을 받아서 반환할 때, 거의 사용 x
+
+**+** 리액트 dev tools, network, storage, cpu, ram, render tree, ... 개발자 도구 끝없음) 미리 공부하는 거 추천
+
+### 04/30
+
+- 기술면접 대비 연습 질문1
+  : 장바구니에 상품을 추가하는 프로세스를 설명해주세요. 상품이 추가될 때 사용자 인터페이스는 어떻게 업데이트되나요?
+
+답변) 전역 상태 관리 라이브러리를 통해 장바구니에 담기는 상품 state를 관리합니다.
+React 특성으로 state는 props를 통해서만 전달되는데, props drilling 현상이 발생하여 구현 시 불편함을 겪을 수 있습니다.
+따라서 전역 상태 관리 라이브러리를 사용하면 전역에서 해당 state를 사용할 수 있습니다.
+상품 추가시 사용자 인터페이스는 state의 변경으로 인해 리렌더링되며 변경 사항이 적용된 화면을 보여줍니다.
+해당 기능 구현 시 초기에는 전역 상태 관리를 위해 Context api를 고려했지만, 최상위 컴포넌트에서 전역적으로 공유하기 때문에
+장바구니 state 변경시 불필요한 렌더링이 일어날 수 있어 렌더링 제어가 용이한 zustand를 적용했습니다.
+용자가 상품을 추가하면, cartItem state에 이미 추가되어있는 상품인지 고유 Id 포함여부 확인을 합니다.
+포함되어 있지 않으면 state에 상품 객체 값을 추가하는 action을 발생시키는 함수이며,
+포함되어 있다면 장바구니에서 수량을 변경해달라는 알림창을 보여주게 됩니다. 상품이 추가되면 구매자 로그인 시에만 화면 하단에 장바구니 아이콘이 추가로 보여지며,
+아이콘 상단에 추가된 상품의 총 개수를 확인할 수 있습니다.
+장바구니 페이지는 슬라이딩 형식으로 보여지고 추가된 상품의 정보를 확인, 수량을 수정할 수 있습니다.
+새로고침 시 state가 초기화 되기 때문에 persist로 localstorage에 저장하는 기능을 이용하여 state를 유지시켰습니다.
+
+- 기술면접 대비 연습 질문2
+  : 무한 스크롤(infinite scroll) 구현을 위해 고려해야 할 주요 요소는 무엇이라고 생각하시나요? 프로젝트에서 구현하신 과정을 자세히 설명해주세요.
+
+답변) 무한 스크롤 기능은 개발 측면에서는 관찰해야 할 컴포넌트와 데이터 fetching 로직을 중요하게 고려해보아야 한다고 생각합니다.
+useInView, React-Query, Firebase를 사용하여 무한 스크롤을 구현한 경험이 있는데,
+useInView 훅의 ref로 어떤 컴포넌트를 관찰하는지에 따라 구현 방향이 크게 달라졌습니다.
+더불어서 fetching 과정은 React-query의 useInfiniteQuery를 사용하여 firebase에서 쿼리 스냅을 가져오는 함수와
+react-query 훅의 파일을 분리시켜 커스텀 훅을 만들어 구현했고, firebase에서 쿼리 스냅을 가져와
+쿼리 함수에 넘겨주는 과정을 겪으면서 데이터 로직 분리와 추상화가 논리적으로 구성되어야 함을 깨달았습니다.
+무한 스크롤은 ref로 직접 제어되는(관찰되어지는) 컴포넌트에 도달하게 되면 다음 데이터를 fetching하게 됩니다.
+데이터를 가져오면 새로 렌더링하여 다음 상품을 보여줄 수 있습니다.
+따라서 UI적 측면에서는 데이터 fetching시 로딩 아이콘을 보여주거나 스켈레톤 UI로 사용자 경험을 향상시킬 수 있어야 한다고 생각합니다.
+무한 스크롤을 구현하면서 가장 마지막 데이터의 상품 컴포넌트에 도달했을때 useInView의 inView 불린 값이 true가
+되어 다음 페이지를 불러오는 함수를 호출하며 불필요한 호출값이 늘어난 적이 있습니다.
+이를 해결하기위해 다음 페이지가 있을 경우에만 fetch하도록 수정하며(다음 page가 있는지 불린값을 반환하는
+useInfiniteQuery의 state를 활용하여) 불필요한 추가 렌더링을 제거하여 최적화하였습니다.
+
+> 나의 경험을 바탕으로 말하기, 천천히 또박또박 말하기, 기술 나열이 아닌 이해를 기준으로 말하기
+
+> useState로 클로저 이해하기
+
+useState 훅과 클로저는 서로 관련이 있습니다. 클로저는 함수가 선언된 렉시컬 스코프의 변수를 "기억"하는
+JavaScript의 특성입니다. 이는 useState 훅에서 상태 업데이트 함수를 사용할 때 중요한 역할을 합니다.
+
+예를 들어, 아래와 같은 코드를 생각해봅시다.
+
+```js
+const [count, setCount] = useState(0);
+
+useEffect(() => {
+  const intervalId = setInterval(() => {
+    setCount(count + 1);
+  }, 1000);
+
+  return () => clearInterval(intervalId);
+}, []);
+```
+
+이 코드는 매 초마다 count 상태 값을 증가시키려고 시도합니다. 그러나 이 코드는 예상대로 동작하지 않습니다.
+왜냐하면 setCount 함수가 호출될 때마다 count의 값은 클로저에 의해 "기억"되어 있기 때문입니다.
+useEffect 훅이 처음 실행될 때 count의 값은 0이므로, setCount 함수는 항상 0 + 1을 설정하게 됩니다.
+
+이 문제를 해결하기 위해, setCount 함수를 호출할 때 **현재 상태 값을 기반으로 새 상태 값을 계산하는 함수를 전달**할 수 있습니다.
+
+```js
+const [count, setCount] = useState(0);
+
+useEffect(() => {
+  const intervalId = setInterval(() => {
+    setCount((currentCount) => currentCount + 1);
+  }, 1000);
+
+  return () => clearInterval(intervalId);
+}, []);
+```
+
+이렇게 하면, setCount 함수는 매번 최신의 count 상태 값을 가져와서 새 상태 값을 계산합니다.
+이는 useState 훅과 클로저가 함께 작동하는 한 가지 예입니다.
+
+useState 훅은 상태 변수(count와 같은)와 그 상태를 업데이트하는 함수(setCount와 같은)를 반환합니다.
+이 상태 업데이트 함수는 두 가지 방식으로 사용할 수 있습니다.
+
+1. 직접적인 값: setCount(1)과 같이 새로운 상태 값을 직접 전달할 수 있습니다.
+2. 함수: setCount(currentCount => currentCount + 1)과 같이 현재 상태 값을 인자로 받는 함수를 전달할 수 있습니다.
+   이 함수는 현재 상태 값을 받아 새로운 상태 값을 계산하고 반환합니다.
+   이 두 번째 방식은 상태 업데이트가 이전 상태에 기반을 두는 경우에 유용합니다.
+   이 방식을 사용하면, 상태 업데이트 함수는 항상 최신의 상태 값을 참조하게 됩니다.
+
+**+** useState로 값을 업데이트할 때 한박자씩 느리게 업데이트되는 현상은 React의 상태 업데이트 메커니즘과 관련이 있습니다.
+
+React의 상태 업데이트는 비동기적으로 이루어집니다. 즉, setCount와 같은 상태 업데이트 함수를 호출하더라도
+상태 값이 즉시 변경되지 않습니다.
+대신, React는 상태 업데이트를 일정한 시점에 일괄 처리합니다. 이는 성능 최적화를 위한 것입니다.
+
+따라서, 상태 업데이트 함수를 호출한 직후에 상태 값을 참조하면, 업데이트가 아직 적용되지 않은 이전의 상태 값을 얻게 됩니다.
+이로 인해 상태 값이 한박자 느리게 업데이트되는 것처럼 보일 수 있습니다.
+
+이 문제를 해결하기 위해, 상태 업데이트 함수에 함수를 전달하여 이전 상태 값을 기반으로 새 상태 값을 계산할 수 있습니다.
+이 방법을 사용하면, 상태 업데이트 함수는 항상 최신의 상태 값을 사용하여 새 상태 값을 계산합니다
