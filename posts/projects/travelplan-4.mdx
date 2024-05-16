@@ -11,12 +11,31 @@ cate: travelplan
 발생했다.
 
 그 외 방식? NginX 보안 설정 시도했는데 API 충돌로 인해 설정 복귀,
-NginX로 CORS??
+NginX로 CORS 설정하기??
 
 <hr />
 
 👩‍💻 SSR, SSG 제공 뿐만 아니라 환경설정 옵션으로 rewrites, redirects를 제공하며 Proxy와 같은 효과를 내주는 것을 적용해보고
 Next.js가 **React 프레임워크**임을 확실히 체감하게 되었다.
+
+```next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    compiler: {
+        styledComponents: true,
+    },
+    reactStrictMode: false,
+    swcMinify: true,
+    async rewrites() {
+        return [
+            {
+                source: "/api/recommend/:path*",
+                destination: "http://api.kcisa.kr/openapi/API_CNV_060/request/:path*",
+            },
+        ];
+    },
+}
+```
 
 <hr />
 
