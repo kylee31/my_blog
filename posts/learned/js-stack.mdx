@@ -1,8 +1,14 @@
 ---
-title: 📝... Javascript, 디바운싱, 쓰로틀링
+title: Javascript, 디바운싱, 쓰로틀링
 date: 2024-02-26
-description: Javascript에서 Closuer란 무엇인가
+description: 디바운싱, 쓰로틀링
 ---
+
+> 디바운싱 (Debouncing):
+> 디바운싱은 연속적으로 발생하는 이벤트가 일정 시간 동안 없을 때에만 이벤트를 처리하는 기술입니다.
+
+> 쓰로틀링 (Throttling):
+> 쓰로틀링은 연속적으로 발생하는 이벤트의 처리 빈도를 제한하는 기술입니다.
 
 디바운싱과 쓰로틀링은 둘 다 성능 및 사용자 경험을 향상시키기 위해 사용되는 기술입니다.
 둘 다 이벤트 핸들러를 제어하여 연속적으로 발생하는 이벤트의 처리를 최적화합니다.
@@ -25,3 +31,31 @@ description: Javascript에서 Closuer란 무엇인가
 디바운싱과 쓰로틀링은 각각 다른 상황에 적합하게 사용됩니다.
 **디바운싱**은 이벤트의 **발생 빈도**를 줄이는 것에 중점을 두며, **쓰로틀링**은 이벤트의 **처리 빈도**를 제한하는 것에 중점을 둡니다.
 이 두 기술은 모두 프론트엔드에서 성능 및 사용자 경험을 향상시키는 데 유용하게 사용됩니다.
+
+**💻 예제**
+
+- 디바운싱 : 연이어 발생하는 이벤트 중 마지막 이벤트에 대해서만 함수를 호출하는 기술<br/>
+  [예제] 검색어 입력창에서 사용자가 타이핑할 때, 디바운싱을 사용하면 마지막 입력 이벤트 후에만 실제 검색을 실행할 수 있다.
+
+```js
+import { debounce } from "lodash";
+
+const debouncedFunction = debounce(() => {
+  console.log("디바운싱 중!");
+}, 1000);
+
+inputElement.addEventListener("input", debouncedFunction);
+```
+
+- 쓰로틀링 : 특정 동작이 주어진 시간 동안 최대 한 번만 발생하도록 하는 기술<br/>
+  [예제] 사용자의 스크롤 이벤트에 대응해 특정 함수를 호출할 때, 쓰로틀링을 사용하면 연속적인 스크롤에 대한 함수 호출을 제어할 수 있다.
+
+```js
+import { throttle } from "lodash";
+
+const throttledFunction = throttle(() => {
+  console.log("쓰로틀링 중!");
+}, 1000);
+
+window.addEventListener("scroll", throttledFunction);
+```
