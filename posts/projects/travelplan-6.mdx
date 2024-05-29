@@ -1,0 +1,50 @@
+---
+title: CORS 에러 재발생, 해결 과정 (feat. 문화공공데이터광장)
+date: 2024-05-16
+description: CORS 에러 확인, 해결 과정
+cate: travelplan
+---
+
+오랜만에 호스팅한 웹 사이트 접속하고 키워드 검색을 했는데, 다음과 같은 오류가 발생했다.
+
+![](/projects/travelplan/6-1.jpg)
+
+아직 발급받아둔 무료 도메인은 만료 전이고, 이후 변경된 사항이 없었기 때문에 당황했지만 오류 코드를 확인했다.
+총 2가지 오류로 cors에러와 net::ERR_FAILED 실패로 해당 요청 URL을 들어가니 No context-path matches the request URI.
+라는 문구가 보였다.
+
+먼저 프로젝트 코드를 확인했다. 구현 시 SOP을 next config의 rewrites 설정으로 해결했기 때문에, 혹시나 하고
+코드를 살펴봤지만 이전과 다를건 없었다.
+
+그렇다면 역시 open api 쪽 문제일건데, 사용했던 open api로 들어가보았다.
+([문화체육관광부\_추천여행지](https://www.culture.go.kr/data/openapi/openapiView.do?id=581&category=D&gubun=A#/default/%EC%9A%94%EC%B2%AD%EB%A9%94%EC%8B%9C%EC%A7%80_Get))
+
+먼저 서비스 키 유효기간이 있었는지 확인했지만 따로 기간이 정해져있는건 아닌 것 같았다. 그래서 기본 URL 정보를 다시 확인해보았다.
+
+![](/projects/travelplan/6-2.jpg)
+
+기본정보 URL이 현재 사용하고 있는 URL과 일치했다. 그러나 아래를 내려 활용명세의 default URL이 API_CNV_060이 아닌 API_CNV_061로 나와있었다.
+
+![](/projects/travelplan/6-3.jpg)
+
+두가지 default URL이 다르게 나와있어 API_CNV_061로 수정 후 재검색해보았더니 잘 동작했다.
+왜인지는 모르겠으나 기본 URL 정보가 혼합되어 있어 이러한 상황이 발생했던 것..!
+
+문화공공데이터광장 데이터(API) 문의 게시판에 글을 남기고 싶었는데 오류페이지 란이 필수항목도 아닌데 입력하래서 입력했더니
+계속 인식을 못하고 입력하랜다ㅠ.ㅠ (오류페이지를 입력하세요. 이것도 심지어 alert 창으로 알려준다..ㅎ!)
+
+![](/projects/travelplan/6-4.jpg)
+
+나중에 글 남기기..
+
+```글 남기기
+- API명 : 문화체육관광부_추천여행지
+- 세부 증상 :  문화체육관광부_추천여행지 API의 기본정보 URL과, 활용 명세 default URL 정보가 서로 다릅니다.
+
+[기본정보 URL] http://api.kcisa.kr/openapi/API_CNV_060/request
+[활용 명세 default URL] /openapi/API_CNV_061/request
+
+기본정보에 나와있는 API_CNV_060으로 사용하고 있었으나, 최근 오류가 발생하여 API_CNV_061로 URL을 수정하니 해결되었습니다. 불일치된 URL 정보에 대해 확인 및 수정 부탁드립니다!
+```
+
+❗ 2024.05.19 기준 위의 오류 수정되어 있음!
