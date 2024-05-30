@@ -1,0 +1,33 @@
+---
+title: 요구사항 기능 구현
+date: 2024-04-25
+description: 요구사항에 따른 커머스 플랫폼 기능 구현 진행, Firebase 연동
+cate: ecommerce
+---
+
+> 커머스 프로젝트 주요 기능 구현, DB 연동
+
+Firebase는 NoSQL로, 2차원 테이블 형식인 스키마를 가지는 RDBMS(MySQL 등)와 달리 정해진 스키마가 없다. 따라서 RDBMS보다
+자유도가 높다. 다른 프로젝트에서 Firebase cloud storage 사용했을 땐, 자유도가 높은 장점도 있지만 조작이나 기획이
+까다로워진다는 생각을 하기도 했었다.
+
+그러나 SQL 쿼리문을 직접 작성하여 데이터를 조작하지 않아도 되며, Firebase측에서 제공하는 함수와 메소드를 사용하면 편리하게
+다룰 수 있다는 점이 큰 장점이라고 생각하여 사용하게 되었다.(이 외에도 Firebase 연동으로 계정(회원가입)을 관리하고, cloud storage로 데이터를 관리, store로 이미지 및 미디어 데이터 관리까지
+한번에 가능하다는 점이 좋았다.)
+
+- Firebase cloud storage DB collection 스키마
+  ![](/projects/ecommerce/2-1.jpg)
+  ![](/projects/ecommerce/2-2.jpg)
+  ![](/projects/ecommerce/2-3.jpg)
+
+**+** Firebase : Baas(Backend as a service)로 서비스형 백엔드.
+
+[2주차 구현 요구사항]
+
+- ✅ 상품 CRUD
+- ✅ 장바구니 CRUD
+
+[3주차 구현 요구사항]
+
+- ✅ 구매자 (결제 SDK 연동, 구매 내역 페이지, 구매 취소)
+- ✅ 판매자 (주문정보 확인 및 변경)
