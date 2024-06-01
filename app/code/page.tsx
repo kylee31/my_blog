@@ -3,6 +3,8 @@ import "../../styles/pages.css";
 import { allCodes } from "@/.contentlayer/generated";
 import Link from "next/link";
 
+const ALL_CODES = allCodes;
+
 export default function Code() {
   return (
     <Layout>
@@ -13,7 +15,7 @@ export default function Code() {
             알고리즘 및 코드 관련
           </span>
         </div>
-        {allCodes.map((code, idx) => {
+        {ALL_CODES.map((code, idx) => {
           const { slug, title, description } = code;
           return (
             <Link

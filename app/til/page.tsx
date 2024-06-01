@@ -3,6 +3,8 @@ import "../../styles/pages.css";
 import Link from "next/link";
 import { allTils } from "@/.contentlayer/generated";
 
+const ALL_TILS = allTils.sort((a, b) => b.date.localeCompare(a.date));
+
 export default function Til() {
   return (
     <Layout>
@@ -13,7 +15,7 @@ export default function Til() {
             Today I Learned
           </span>
         </div>
-        {allTils.map((til, idx) => {
+        {ALL_TILS.map((til, idx) => {
           const { slug, title, date, description } = til;
           return (
             <Link
