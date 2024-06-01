@@ -147,14 +147,39 @@ Promise 객체, async/await까지 비동기 매커니즘을 알아보자!
 - Promise.resolve, Promise.reject
   : 이미 존재하는 값을 매핑하여 프로미스 생성
 
+  ```js
+  //둘의 결과는 동일!
+  const resolvePromise = new Promise((resolve) => resolve([1, 2, 3]));
+  resolvePromise.then(console.log);
+
+  const resolvePromise2 = Promise.resolve([1, 2, 3]);
+  resolvePromise2.then(console.log);
+  ```
+
 - Promise.all
   : 여러 개의 비동기 처리를 모두 병렬로 처리할 때 사용 (ex. 각 비동기 처리의 의존성이 없을 때 병렬 처리하면 유용)
+
+  - 아래의 코드는 서로 간 의존성이 없기 때문에 all 메소드로 병렬 처리 가능
+    ![](/learned/js-promise-4.jpg)
+
+  - 각각의 함수가 Web API로 한번에 요청이 가게 되고 병렬 처리가 된다
+    ![](/learned/js-promise-5.jpg)
 
 - Promise.race
   : Promise.all과 비슷, 가장 먼저 fulfilled된 프로미스의 처리 결과를 resolve
 
+  ✔ 과제 면접에서 네트워크 요청이 몇초 이상 걸리고, 그 이후에 뭘 해주세요~ 라고 요구할 때 많이 사용된다
+
+  - 아래 코드에서는 가장 시간이 짧게 걸리는(fulfilled된) 3이 먼저 resolve된다
+    ![](/learned/js-promise-6.jpg)
+
 - Promise.allSettled
   : 전달받은 모든 프로미스가 settled 상태가 되면 처리 결과를 배열로 반환
+
+  ✔ 네트워크 요청을 단건으로 찔러야 할 때, 예를 들어 체크리스트 항목을 여러 개 체크 후 처리 결과(성공,실패)를
+  보여주어야 할때 많이 사용된다
+
+  ![](/learned/js-promise-7.jpg)
 
 <hr />
 
