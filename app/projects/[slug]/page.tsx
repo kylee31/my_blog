@@ -5,6 +5,8 @@ import { Props } from "@/types/postType";
 import Link from "next/link";
 import "../../../styles/pages.css";
 
+const ALL_PROJECTS = allProjects.sort((a, b) => b.date.localeCompare(a.date));
+
 export default function Project({ params }: Props) {
   const info = myProject.find((doc) => doc.slug === params.slug);
   return (
@@ -16,9 +18,8 @@ export default function Project({ params }: Props) {
           </span>
           <span className="text-xs font-bold text-gray-500">{info?.desc}</span>
         </div>
-        {allProjects
-          .filter((doc) => doc.cate.includes(params.slug))
-          .map((project, idx) => {
+        {ALL_PROJECTS.filter((doc) => doc.cate.includes(params.slug)).map(
+          (project, idx) => {
             const { title, date, description, cate } = project;
             return (
               <Link
@@ -35,7 +36,8 @@ export default function Project({ params }: Props) {
                 <div>{description}</div>
               </Link>
             );
-          })}
+          }
+        )}
       </div>
     </Layout>
   );

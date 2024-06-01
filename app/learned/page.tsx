@@ -3,6 +3,8 @@ import Layout from "@/components/Layout";
 import Link from "next/link";
 import "../../styles/pages.css";
 
+const ALL_LEARNEDS = allLearneds.sort((a, b) => b.date.localeCompare(a.date));
+
 export default function Learned() {
   return (
     <Layout>
@@ -13,7 +15,7 @@ export default function Learned() {
           </span>
           <span className="text-xs font-bold text-gray-500">개념 정리</span>
         </div>
-        {allLearneds.map((learned, idx) => {
+        {ALL_LEARNEDS.map((learned, idx) => {
           const { slug, title, date, description } = learned;
           return (
             <Link
