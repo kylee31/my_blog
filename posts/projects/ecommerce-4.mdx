@@ -1,0 +1,65 @@
+---
+title: 로그인 에러 처리, Firebase error code
+date: 2024-06-17
+description: Firebase auth error code 설정과 연관된 기능 트레이드오프 고민
+cate: ecommerce
+---
+
+> 로그인 오류 알림 처리 방식 수정
+
+임시적으로 alert으로 처리해둔 오류 알림 방식을 변경하기 위해 로직을 구성해보았다. utils 폴더에 getErrorMessage 함수를
+작성하고, switch문으로 error code에 따라 다른 메시지를 반환하도록 작성했다.
+
+```js
+  // Account.tsx
+  const onSubmit: SubmitHandler<AccountInputsType> = async (data) => {
+    try {
+      await signInUser(data);
+      navigate("/");
+    } catch (error: any) {
+      //TODO: 에러 메시지 분기처리
+      const errorMessage = getErrorMessage(error);
+      //console.log(errorMessage);
+      alert(errorMessage);
+    }
+  };
+```
+
+```js
+// getErrorMessage.tsx
+export const getErrorMessage = (error: any) => {
+  if (error.code) {
+    switch (error.code) {
+      case "auth/invalid-credential":
+        return "유효하지 않은 아이디 혹은 비밀번호입니다";
+    }
+  }
+  return "unexpected error";
+};
+```
+
+그러나 firebase의 error code를 확인해보니, 아이디 혹은 비밀번호 입력 오류에 대한 값이 기대했던 code로 나오지 않았다.
+(auth/user-not-found, auth/wrong-password) 모든 상황에서 auth/invalid-credential이라는 오류 코드가 찍힐 뿐이었다.
+
+검색 결과, Firebase 측에서 이메일 열거(=> 악의적인 행위자가 API에 이메일 주소를 전달하고 응답을 확인하여 시스템의 사용자를
+추측하거나 확인하는 무차별 대입 공격의 한 유형) 보호를 위해 2023년 9월 15일 이후에 프로젝트를 만든 경우 이메일 열거 보호가
+기본적으로 사용 설정되어 있었다.
+
+여기서 기능과 보안 측면에 있어서 트레이드 오프를 해야하는 상황이 발생했다. Firebase Console에서 프로젝트의 이러한 설정을 해제하면 기대했던
+에러 코드를 확인할 수 있으며 각 오류에 대한 메시지를 반환해줄 수 있지만, 반대로 이메일 열거에 대한 보호는 해제되어 공격에
+취약해지는 상황이 발생한 것이다.
+
+개인 프로젝트이기 때문에 불특정 사용자에게 노출될 일이 없지만 기본적으로 제공해주는 보안 관련 서비스를 포기하고 싶지는 않았다.
+위의 코드와 같이 auth/invalid-credential 에러 코드에 대해 유효하지 않은 아이디 혹은 비밀번호입니다 라는 문구를 반환하여
+사용자가 로그인 정보를 다시 작성할 수 있도록 하는 방향으로 결정했다.
+
+또 현재는 alert으로 알림창을 띄우지만, Shadcn/UI의 toast 혹은 alert dialog를 적용하여 UI를 개선시키려고 한다!
+UI, UX 측면에서 alert은 개발할 때 유용하지만 실제 프로덕션에 적용되었을때 이것만큼 예뻐보이지 않는 기능은 없는 것 같다😅
+
+<hr />
+
+### 📌참고자료
+
+- [Firebase Auth's signInWithEmailAndPassword not providing descriptive error codes, reddit](https://www.reddit.com/r/Firebase/comments/18et6gl/firebase_auths_signinwithemailandpassword_not) <br/>
+- [이메일 열거 보호 사용 설정 또는 중지, google cloud](https://cloud.google.com/identity-platform/docs/admin/email-enumeration-protection?hl=ko)
+- [Firebase Auth error 모음집](https://velog.io/@drrobot409/Firebase-Auth-error-%EB%AA%A8%EC%9D%8C%EC%A7%91)

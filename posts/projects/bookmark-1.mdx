@@ -31,11 +31,11 @@ import { authService } from "../fbase";
 export const isLogin = () => !!authService.currentUser;
 ```
 
-Login 시에만 setPersistence로 저장하게 되어있어 새로고침 시 정보가 날아가는 현상이 발생했던 것이다..!
-Firebase 서비스 계정 파일(해당 프로젝트의 fbase.json)에서 setPersistence로 localstorage에 사용자 정보를 저장하도록
-수정하여 오류 해결!
+**?** 2024/06/17 과거 나의 코드에 대한 의문점. getAuth의 onAuthStateChanged를 활용하면 로그인 추적이 가능하다.
+Redux를 사용하여 로그인 정보를 전역으로 활용하는데 이때 onAuthStateChanged를 사용한다. localstorage에 setPersistence로
+저장하지 않아도 되는데 fbase 파일에 해당 정보를 저장해주는 코드를 작성했다. 불필요한 코드이므로 로직 리팩토링 진행함.
 
-일반적으로 OAuth 2.0을 사용하여 소셜 로그인 기능이 제공되고, Firebase 또한 그러했다.
+➕ 일반적으로 OAuth 2.0을 사용하여 소셜 로그인 기능이 제공되고, Firebase 또한 그러했다.
 
 ✅ Firebase 인증 - Authentication 문서 중
 `Firebase 인증은 여타 Firebase 서비스와 긴밀히 연동하고 OAuth 2.0 및 OpenID Connect 등의 산업 표준을 활용하므로 커스텀 백엔드와 쉽게 통합할 수 있습니다.`
@@ -44,6 +44,6 @@ Firebase 서비스 계정 파일(해당 프로젝트의 fbase.json)에서 setPer
 
 ### 📌참고자료
 
-[Firebase Auth 설정과 로그인 & 로그아웃 구현](https://thisyujeong.dev/blog/firebase-auth)
-[How to persist a Firebase login? - stackoverflow](https://stackoverflow.com/questions/42878179/how-to-persist-a-firebase-login)
-[firebaes 인증 상태 지속성](https://firebase.google.com/docs/auth/web/auth-state-persistence?hl=ko)
+- [Firebase Auth 설정과 로그인 & 로그아웃 구현](https://thisyujeong.dev/blog/firebase-auth)<br/>
+- [How to persist a Firebase login? - stackoverflow](https://stackoverflow.com/questions/42878179/how-to-persist-a-firebase-login)<br/>
+- [firebaes 인증 상태 지속성](https://firebase.google.com/docs/auth/web/auth-state-persistence?hl=ko)<br/>
