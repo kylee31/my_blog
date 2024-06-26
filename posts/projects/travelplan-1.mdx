@@ -40,6 +40,12 @@ fetch가 아닌 다른 외부 라이브러리(axios와 같은)는 {/* SEARCH: �
 fetch를 Next.js에서 권장하는 이유가 있다. fetch를 사용하면 옵션을 지정하지 않아도 기본적으로 \{cache:'force-cache'\}옵션으로 실행되어
 캐시가 강제적으로 생성된다(SSG).
 
+- { cache: 'force-cache' } - 기본값으로 생략가능(getStaticProps와 유사)
+- { cache: 'no-store' } - 모든 요청에서 최신 데이터 받아오기 (getServerSideProps와 유사)
+- { next: { revalidate: false | 0 | number } } - 10초 후 새 요청오면 페이지 새로 생성 (revalidate옵션이 있는 getStaticProps와 유사)
+
+📍 [Next.js 공식문서, fetch](https://nextjs.org/docs/app/api-reference/functions/fetch#optionscache)
+
 만약 axios를 사용하여 SSR을 구현하려 한다면
 [외부 라이브러리를 사용하여 서버에서 데이터 가져오기](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#fetching-data-on-the-server-with-third-party-libraries)
 에서 확인해보자. Route Segment Config Option을 사용하여 SSR, SSG를 구현한다.
