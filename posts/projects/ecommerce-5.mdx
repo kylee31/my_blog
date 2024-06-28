@@ -1,0 +1,266 @@
+---
+title: LLM 활용으로 코드 회고 및 프로젝트 리팩토링(클린업 함수)
+date: 2024-06-26
+description: 코드 리뷰 (with. ChatGPT) - 비즈니스/뷰 로직 분리, 불필요한 상태 업데이트 방지(useEffect cleanup function)
+cate: ecommerce
+---
+
+> 프로젝트 진행 중 비즈니스/뷰 로직 분리의 중요성을 깨닫고, 데이터 페칭 로직을 아이템 뷰 로직과 분리하여 Hook, 함수로
+> 나누어 작성했다. 이러한 구성이 좋은 방향인건지 스스로 판단하니 정보가 부족하여 헷갈렸고, 페어 프로그래밍을 위해 ChatGPT
+> 사용 방식을 학습해보고 싶었다!
+
+위와 같은 이유로 일부 코드를 회고하며 ChatGPT로 코드 리뷰를 받아보았다. (LLM 사용은 'AI 페어 프로그래밍'이라는 책을 참고했다.)
+프로젝트 중 데이터 페칭(비즈니스 로직)이 필요한 기능인 상세 상품 조회 시, 상품 페이지 하단에 추천 상품을 띄워주는 부분에
+대한 코드 리뷰를 진행했다.
+
+- 추천 상품 구현 코드(상세 상품보다 가격이 낮은 상품 최대 4개 추천)
+
+```ts
+// components/product/RecommendedProduct.tsx
+
+import { DocumentData } from "firebase/firestore";
+import PreviewProduct from "../common/PreviewProduct";
+import useGetRecommendedProduct from "@/hooks/useGetRecommendedProduct";
+import { useNavigate } from "react-router-dom";
+
+const RecommendedProduct = ({
+  productDocSnap,
+  productCategory,
+}: {
+  productDocSnap: DocumentData;
+  productCategory: string;
+}) => {
+  const { recommendedProduct } = useGetRecommendedProduct({
+    productDocSnap,
+    productCategory,
+  });
+  const navigate = useNavigate();
+
+  const handleClickProduct = (idx: number) => {
+    if (!recommendedProduct) return;
+    navigate(
+      `/category/${decodeURI(productCategory)}/${recommendedProduct[idx].id}`
+    );
+  };
+
+  if (!productCategory || recommendedProduct.length < 1) {
+    return <></>;
+  }
+
+  return (
+    <div className="w-full flex flex-col items-start mb-5">
+      <div>추천상품</div>
+      <div className="w-full grid grid-flow-col col-span-4 gap-8">
+        {recommendedProduct.map((data: DocumentData, idx) => (
+          <PreviewProduct
+            key={`recommendedProduct_${idx}`}
+            info={data}
+            onClick={() => handleClickProduct(idx)}
+            isVisible={false}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default RecommendedProduct;
+```
+
+```ts
+// hooks/useGetRecommendedProduct.tsx
+
+import { getRecommendedProducts } from "@/services/productService";
+import { DocumentData } from "firebase/firestore";
+import { useEffect, useState } from "react";
+
+const useGetRecommendedProduct = ({
+  productDocSnap,
+  productCategory,
+}: {
+  productDocSnap: DocumentData;
+  productCategory: string;
+}) => {
+  const [recommendedProduct, setRecommendedProduct] = useState<DocumentData[]>(
+    []
+  );
+
+  useEffect(() => {
+    const recommendedProduct = async () => {
+      const data = await getRecommendedProducts({
+        productCategory,
+        productDocSnap,
+      });
+      setRecommendedProduct(data);
+    };
+    recommendedProduct();
+  }, [productDocSnap, productCategory]);
+
+  return { recommendedProduct };
+};
+
+export default useGetRecommendedProduct;
+```
+
+```ts
+// services/productService.ts
+
+export const getRecommendedProducts = async ({
+  productCategory,
+  productDocSnap,
+}: {
+  productCategory: string;
+  productDocSnap: DocumentData;
+}) => {
+  const q = query(
+    collection(db, "product"),
+    where("productCategory", "==", productCategory),
+    orderBy("productPrice", "desc"),
+    startAfter(productDocSnap),
+    limit(4)
+  );
+  const docSnap = await getDocs(q);
+  const docData = docSnap.docs.map((doc) => doc.data());
+  return docData;
+};
+```
+
+▶ 코드 리뷰를 요청하기 위해 기본 정보로 현재 코드가 어떤 프레임워크로 작성되었는지, 코드 리뷰의 목적이 무엇인지 알려주었다.
+
+![](/projects/ecommerce/5-1.jpg)
+
+💻 코드 리뷰를 시작하겠습니다. 전체적으로 매우 잘 작성된 코드로 보입니다. 특히 비즈니스 로직과 뷰 로직을 분리하는 점에서
+좋은 구조를 가지고 있습니다. 그러나 몇 가지 개선 사항을 제안드립니다.
+
+### 비즈니스 로직과 뷰 로직의 분리 <br/>
+
+- 추천 상품을 가져오는 로직: 비즈니스 로직은 useGetRecommendedProduct 훅과 getRecommendedProducts 서비스에서 적절히
+  분리되었습니다. 이는 좋은 설계 패턴입니다. 다만, getRecommendedProducts 함수가 Firebase의 query 메서드와 같은 Firebase
+  특정 로직에 강하게 결합되어 있어, 이후 Firebase가 아닌 다른 서비스를 사용할 경우 변경이 어려울 수 있습니다. 이를 위해
+  추가적인 추상화 계층을 고려해 볼 수 있습니다.
+
+### 버그 위험성 <br/>
+
+- 데이터 유효성 검사: recommendedProduct가 없거나 길이가 0일 경우 빈 컴포넌트를 반환하지만, 이 로직은 간단히 null이나
+  undefined를 반환할 수도 있습니다. 그리고 recommendedProduct가 비어 있는지 확인하는 대신 recommendedProduct가 존재하는지
+  확인하는 것이 더 명확할 수 있습니다.
+
+### 성능 <br/>
+
+- 비동기 데이터 처리: useEffect 안에서 정의된 recommendedProduct 함수는 비동기로 데이터를 가져오며 잘 작동합니다.
+  하지만 컴포넌트가 마운트 해제될 때 비동기 작업을 취소하는 것이 좋습니다. 이렇게 하면 불필요한 상태 업데이트를 방지할 수
+  있습니다.
+
+### 가독성 및 코딩 스타일 <br/>
+
+- 컴포넌트명과 변수명: 전반적으로 명확하고 이해하기 쉬운 이름을 사용하고 있습니다. 다만, recommendedProduct 대신
+  recommendedProducts (복수형)으로 명명하는 것이 더 직관적일 수 있습니다.
+- CSS 클래스명: CSS 클래스명도 명확하게 잘 사용하고 있습니다.
+- 구조화된 컴포넌트: 컴포넌트가 잘 구조화되어 있고, 역할이 명확하게 분리되어 있습니다.
+
+### 코드 개선 제안 (생략)
+
+...
+
+### 요약
+
+- 비즈니스 로직과 뷰 로직: 훅을 통해 잘 분리되었습니다.
+- 버그 위험성: 데이터 유효성 검사와 비동기 작업 취소 등을 통해 개선할 수 있습니다.
+- 성능: 비동기 작업 관리와 컴포넌트 마운트 해제 시 처리가 필요합니다.
+- 가독성 및 코딩 스타일: 명확한 변수명과 코드 구조로 유지되었습니다.
+
+<hr />
+
+비즈니스/뷰 로직이 훅을 통해 잘 분리되었다는 답변을 주었다. 해당 코드 리뷰에서 "컴포넌트가 마운트 해제될 때 비동기 작업을
+취소하는 것이 좋습니다"라는 문장에 주목했다. useEffect로 데이터를 가져오는 비동기 작업(사이드 이펙트)을 처리하는데,
+클린업 함수를 작성하지 않아 메모리 누수와 불필요한 상태 업데이트를 방지하는데 어려움이 있을 수 있다는 피드백이었다.
+
+useEffect의 정리 함수로 비동기 작업을 취소하는 방법은 AbortController를 사용하여 이뤄진다는 것을 알았다.
+간단히 알아보았을 땐 fetch에 AbortSignal을 전달하여 취소 메소드를 호출하여 작업을 관리할 수 있는 Web API이다.
+
+```js
+var controller = new AbortController();
+var signal = controller.signal;
+
+var downloadBtn = document.querySelector('.download');
+var abortBtn = document.querySelector('.abort');
+
+downloadBtn.addEventListener('click', fetchVideo);
+
+abortBtn.addEventListener('click', function() {
+  controller.abort();
+  console.log('Download aborted');
+});
+
+function fetchVideo() {
+  ...
+  fetch(url, {signal}).then(function(response) {
+    ...
+  }).catch(function(e) {
+    reports.textContent = 'Download error: ' + e.message;
+  })
+}
+```
+
+위의 Web API(AbortController)는 fetch 함수에 signal을 전달하여야 하므로 현재 프로젝트에서 사용하는 Firebase와는 맞지 않는
+방식이었다. 따라서 isMount 변수를 생성하여, boolean 값과 조건문으로 처리하도록 만들었다. 마운트 시 비동기 동작 처리를 실행하고 클린업 함수로
+isMount를 false로 처리하여 함수 실행이 일어나지 않도록 로직을 추가하였다.
+
+아래는 추천 데이터 Hook을 리팩토링하여 개선한 코드이다.
+
+```js
+import { getRecommendedProducts } from "@/services/productService";
+import { DocumentData } from "firebase/firestore";
+import { useEffect, useState } from "react";
+
+const useGetRecommendedProduct = ({
+  productDocSnap,
+  productCategory,
+}: {
+  productDocSnap: DocumentData;
+  productCategory: string;
+}) => {
+  const [recommendedProduct, setRecommendedProduct] = useState<DocumentData[]>(
+    []
+  );
+
+  useEffect(() => {
+    let isMount = true;
+
+    const recommendedProduct = async () => {
+      try {
+        const data = await getRecommendedProducts({
+          productCategory,
+          productDocSnap,
+        });
+        if (isMount) {
+          setRecommendedProduct(data);
+        }
+      } catch (error) {
+        console.log("error fetching recommended products: ", error);
+      }
+    };
+    recommendedProduct();
+
+    return () => {
+      isMount = false;
+    };
+  }, [productDocSnap, productCategory]);
+
+  return { recommendedProduct };
+};
+
+export default useGetRecommendedProduct;
+```
+
+코드 리뷰를 통해 로직 분리를 점검해볼 수 있었고, 추가적으로 불필요한 상태 업데이트로 인한 메모리 누수 관리 측면이
+부족했다는 점을 깨달을 수 있었다. 프로젝트 규모가 작기 때문에 해당 메모리 누수 정도가 큰 영향을 미치지 않을 수 있지만, 상용화된
+서비스에서 놓친다면 큰 영향을 미칠 수 있는 부분이기 때문에 주의해야겠다는 생각을 했다.
+
+<hr />
+
+## 📌참고
+
+- [AbortController in UseEffect | UseEffect 내부에서 비동기함수 실행 할 때](https://mariais.tistory.com/entry/AbortController-in-UseEffect-UseEffect-%EB%82%B4%EB%B6%80%EC%97%90%EC%84%9C-%EB%B9%84%EB%8F%99%EA%B8%B0%ED%95%A8%EC%88%98-%EC%8B%A4%ED%96%89-%ED%95%A0-%EB%95%8C)
+- [Web-API/AbortController, MDN](https://developer.mozilla.org/ko/docs/Web/API/AbortController)
+- [자바스크립트에서 AbortController 를 활용하여 비동기 작업 중단하기](https://genie-youn.github.io/journal/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C_AbortController%EB%A5%BC_%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC_%EB%B9%84%EB%8F%99%EA%B8%B0_%EC%9E%91%EC%97%85_%EC%A4%91%EB%8B%A8%ED%95%98%EA%B8%B0.html)

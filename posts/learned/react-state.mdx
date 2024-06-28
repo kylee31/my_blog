@@ -1,0 +1,72 @@
+---
+title: React, 상태 관리에 대한 정리
+date: 2024-06-27
+description: 상태 종류 및 관리 방법에 따른 패턴/라이브러리와 정리
+---
+
+👩‍💻 프로젝트에 여러 상태 관리 라이브러리를 사용해보면서 종류를 정리할 필요가 있다고 생각했다. 라이브러리는 아니지만
+Context API와 useReducer Hook으로 전역 상태 관리를 해보았고, 이후 Zustand 적용, Redux와 Redux-Thunk 사용으로
+비동기 통신을 관리해보았다. 또 React-Query로 서버 상태 관리를 통해 데이터 관리(캐싱 적용)도 경험했다.
+
+이 과정에서 Redux와 Zustand는 전역 상태 관리 라이브러리로 단방향 통신, 중앙집중형 관리 형식인 Flux 패턴이 특징임을 알았고,
+Recoil도 직접 사용해보진 않았지만 분산 관리 형식인 Atomic 패턴을 사용하는 전역 상태 관리 라이브러리라는 점도 학습했다.
+
+이렇게 다앙햔 상태 관리 라이브러리를 사용하며 React에서는 상태 관리가 코드에서 아주 큰 부분(거의 대부분)을 차지하기 때문에
+상태 관리에 대한 정리가 필요하다고 생각했다. 검색해보니 시간은 지났지만 참고하기 좋은 글이 있어서 번역하며 정리해보려 한다.
+
+💥 아래 정리 글은 21년 기준으로 작성되어, 현재(24년)와 맞지 않는 부분이 있을 수 있다.
+
+<hr />
+
+## 상태 분류 용어 정리
+
+❕ 아래 분류에 사용된 단어는 정식 용어가 아니다. 이해가 쉽도록 상태 용도 별로 분류한 것이고, 정식 용어가 아니기 때문에
+일부 용어가 다르게 사용되더라도 기본적인 개념은 동일하다는 것만 알고 있으면 된다.
+
+- UI 상태 : 애플리케이션의 대화형 부분(ex. 다크 모드 토글, 모달)을 제어하는 ​​데 사용되는 상태
+- 서버 캐시 상태 : 빠른 액세스를 위해 클라이언트 측에서 캐시하는 서버의 상태(ex. API 호출, 결과 저장, 여러 위치에서 사용)
+- Form 상태 : 양식의 다양한 상태(ex. 로드 중, 제출 중, 비활성화됨, 유효성 검사, 재시도 중, 제어/비제어 상태)
+- URL 상태 : 브라우저에서 관리하는 상태(ex. 제품 필터링, 쿼리 매개변수에 저장, 필터링된 동일한 제품을 보기 위해 페이지 새로 고침)
+- State Machine : 시간 경과에 따른 상태의 명시적 모델(ex. 신호등은 녹색 → 노란색 → 빨간색으로 바뀌지만 결코 녹색 → 빨간색으로 바뀌지 않는다)
+
+## 과거, 현재 그리고 미래
+
+![](learned/react-state-1.jpg)
+
+상태 관리 타임라인은 위와 같다.
+
+- Flux 패턴으로 Redux를 만들었고 관측형(Proxy)에 대한 수요로 MobX 탄생. 한동안 서버 캐싱과 UI 상태를 두 가지 중 하나로 관리.
+- props-drlling을 해결하기 위해 Context 등장
+- React Hook 출시로 서버 캐싱 라이브러리인 React-Query, SWR 등장
+- 전역 상태 캐싱을 편하게 하기 위한 여러 라이브러리(jotai, recoil, valtio) 탄생
+- Context 좀 더 캐싱하기 쉽도록 만든 use-context-selector(useSelectedContext) 라이브러리 등장
+
+## 패턴에 따른 상태 관리 라이브러리 분류
+
+- Flux Pattern : Redux, Zustand
+- Atomic Pattern : Recoil, Jotai
+- Proxy Pattern : MobX, Valtio, Overmind
+
+➕ Redux와 Zustand의 차이점 <br/>
+Redux는 단방향 데이터 흐름을 보장하며 상태 관리를 엄격하게 중앙집중화하는 반면, Zustand는 이러한 엄격한 제약을 완화하고 개발자에게
+보다 자유로운 상태 관리 방식 제공
+
+➕ Proxy Pattern? <br/>
+Proxy 패턴은 객체의 기본 작업(속성 접근, 설정, 삭제 등)에 대한 트랩을 정의하여 상태 변경을 감지하고 자동으로 반응할 수 있도록 한다.
+(JavaScript Proxy 객체를 사용하여 상태 관리의 반응성 구현)
+
+[Proxy - JavaScript - MDN Web Docs](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+
+**+** Immer : Immer는 JavaScript 엔진의 Proxy라는 기능 사용.
+Immer는 상태 불변성을 자동으로 관리해주는 라이브러리. Immer를 사용하면 불변 상태를 유지하면서도 마치 가변 상태를 다루는 것처럼
+코드를 작성할 수 있다. 내부적으로 Immer는 JavaScript의 Proxy 객체를 사용하여 상태 변화를 추적하고, 불변성을 유지하면서
+새로운 상태 객체를 생성한다.
+
+[Immer 를 사용한 더 쉬운 불변성 관리](https://react.vlpt.us/basic/23-immer.html)
+
+<hr />
+
+## 📌참고
+
+- [Past, Present, and Future of React State Management](https://leerob.io/blog/react-state-management)
+- [프론트엔드 상태에 관한 정리 글](https://velog.io/@gtah2yk/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C-%EC%83%81%ED%83%9C%EC%97%90-%EA%B4%80%ED%95%9C-%EC%A0%95%EB%A6%AC-%EA%B8%80)
