@@ -1,0 +1,64 @@
+---
+title: Library, 크로스 플랫폼 네이티브 앱 프레임워크
+date: 2024-07-04
+description: React-Native, Flutter (+ web-view 프레임워크)
+---
+
+> React-Native와 Flutter 그리고 web-view 개념에 대해 정리해보자.
+
+👩‍💻 앱을 개발할 수 있는 프레임워크라고만 알고 있는데, 종류를 정리해보는 시간을 갖고 싶었다. 먼저 네이티브 앱이란 무엇인지,
+앱의 종류에 대해 간단히 짚어보자.
+
+- 웹 앱 : 브라우저에서 실행되는 애플리케이션
+- 네이티브 앱 : 특정 모바일 운영체제(iOS, Android 등)에서 직접 실행되도록 해당 운영체제의 프로그래밍 언어와 도구를 사용하여 개발된 애플리케이션
+- 크로스 플랫폼 네이티브 앱 : React Native, Flutter 등과 같은 프레임워크를 사용하여 하나의 코드베이스로 iOS와 Android 앱을 동시에 개발
+- 하이브리드 앱 : WebView를 사용하여 네이티브 앱 내부에 웹 콘텐츠를 임베드하는 형태
+
+이렇게 정리할 수 있다. 이제 React Native와 Flutter를 알아보자.
+{/* TODO: react native, flutter 상세 정리하기 */}
+
+### React Native
+
+Facebook에서 개발한 오픈 소스 프레임워크로, JavaScript와 React를 기반으로 iOS와 Android 애플리케이션을 개발할 수 있다.
+
+[ReactNative, Core Components and APIs (공식문서)](https://reactnative.dev/docs/components-and-apis#basic-components)
+
+- Native Components: 플랫폼(iOS 또는 Android)의 view를 JavaScript로 호출할 수 있게 해주는 React 컴포넌트
+
+  (Core Components: React Native가 기본적으로 제공하는 Native Components 세트, 다른 사람이 만든 Native Component를 사용할 수도 있다.)
+
+  ReactNative에서 코드를 작성할 땐, JavaScript와 React Component(Hook 등)를 사용한다. Runtime에서 React Native가 구현한
+  코드에 상응하는 안드로이드와 iOS view를 생성한다.
+
+### Flutter
+
+Google에서 개발한 오픈 소스 UI 프레임워크로, Dart 언어를 기반으로 작성한 하나의 코드베이스로 iOS와 Android 애플리케이션을 개발할 수 있다.
+위젯이라는 선언적 UI 구성 요소를 사용하여 다양한 디자인을 구현할 수 있다.
+
+✅ React Native는 JavaScript와 React 기반의 개발, Flutter는 Dart와 자체 UI 엔진을 활용하는 프레임워크이다.
+
+➕ WebView란?
+
+WebView는 웹 페이지를 애플리케이션 내에서 보여주기 위해 사용되는 컴포넌트이다. 모바일 애플리케이션 내에 웹 콘텐츠를 임베드하는 데 사용된다.
+즉 네이티브 앱 내에서 웹 콘텐츠를 표시하는 데 사용되며, 다양한 앱 개발 프레임워크에서 지원하는 기능이라고 볼 수 있다.
+
+```js
+import React from "react";
+import { WebView } from "react-native-webview";
+
+const MyWebViewScreen = () => {
+  return (
+    <WebView source={{ uri: "https://example.com" }} style={{ flex: 1 }} />
+  );
+};
+
+export default MyWebViewScreen;
+```
+
+<hr />
+
+## 📌참고
+
+[React 아니고 React Native요! (React Native 지원)](https://blog.imqa.io/react-native/)
+[토스가 꿈꾸는 React Native 기술의 미래](https://toss.tech/article/react-native-2024)
+[WebView](https://docs.tosspayments.com/resources/glossary/webview)
