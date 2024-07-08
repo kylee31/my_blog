@@ -1,0 +1,82 @@
+---
+title: Library, 패키지 매니저 (+빌드 도구)
+date: 2024-07-07
+description: npm, yarn, yarn-berry, pnpm (+Vite)
+---
+
+{/* TODO: 패키지 매니저 정리 */}
+
+> 패키지 매니저의 역할과, 다양한 패키지 매니저를 알아보자.
+
+👩‍💻 패키지 매니저에 대해 정확히 알고 싶어서 글을 작성해본다. 알고 있는 바로는 npm은 Node.js의 내장 라이브러리로 순차적 설치
+방식을 따른다. yarn은 병렬적 설치 방식이기 때문에 속도가 조금 더 빠르다는 특징이 있다. yarn-berry는 PnP 방식으로 node_modules 설치 없이
+(Zero-install)사용할 수 있다.
+
+## 패키지 매니저 역할
+
+1. 의존성 관리:
+   프로젝트에서 필요한 라이브러리와 패키지(모듈)를 설치, 업데이트, 삭제한다.
+   프로젝트의 의존성을 package.json 파일에 기록하여 프로젝트 구성원 모두가 동일한 환경을 재현할 수 있도록 한다.
+
+2. 버전 관리:
+   설치된 패키지의 버전을 관리하여, 특정 버전의 패키지를 설치하거나 업데이트할 수 있다.
+   package-lock.json 또는 yarn.lock 파일을 통해 설치된 패키지의 정확한 버전을 고정한다.
+
+3. 스크립트 실행:
+   package.json 파일에 정의된 스크립트를 실행할 수 있습니다. 예를 들어, 빌드, 테스트, 개발 서버 시작 등의 작업을 손쉽게
+   수행할 수 있다.
+
+4. 캐시 관리:
+   다운로드한 패키지를 캐시에 저장하여, 동일한 패키지를 다시 다운로드할 필요 없이 빠르게 설치할 수 있다.
+
+5. 레지스트리 관리:
+   패키지 매니저는 기본적으로 npm 레지스트리와 같은 중앙 저장소에서 패키지를 다운로드하지만, 프라이빗 레지스트리를
+   설정하여 사용할 수도 있다.
+
+✅ 소프트웨어 개발 과정에서 라이브러리나 프레임워크와 같은 외부 패키지의 관리는 필수적이다. 이러한 패키지 관리를 용이하게
+해주는 도구가 바로 패키지 매니저이다. 패키지의 설치, 업데이트, 삭제 등을 쉽고 효율적으로 관리할 수 있다.
+
+npm, yarn, pnpm, yarn-berry는 모두 Node.js 환경에서 사용되는 패키지 매니저지만, 내부적인 동작 방식과 제공하는 기능에서
+차이를 보인다.
+
+<hr />
+
+## npm
+
+순차적 패키지 설치, Node.js 내장 라이브러리로 설치 필요X 접근성 용이, 출력 로그 방대
+
+## yarn
+
+병렬적 패키지 설치 (속도 향상), 별도 설치 필요, 비교적 시각적으로 깔끔
+
+## pnpm (2017)
+
+npm 과 yarn 의 비효율을 개선한 노드 패키지 매니저.
+pnpm 은 홈디렉토리의 글로벌 저장소인 ~/.pnpm-store 에 모든 패키지를 저장하는 저장소를 두고, 중첩된 패키지는 단 한번만 설치.
+node_modules를 플랫하게 만들지 않는다.
+
+## yarn-berry (2020)
+
+패키지들에 대한 의존성 정보는 .zip파일로 압축되어 .yarn/cache 폴더에 저장하고, 이를 찾기 위한 정보를 .pnp.cjs 파일에 기록.
+
+✨
+
+- npm 은 구글 앱스토어와 같다. npm을 통해 js파일로 이루어진 패키지 (리액트 , 웹소켓 등등)들을 다운받고 이용할 수 있다.
+
+- yarn berry의 장점인 호이스팅을 허용하지 않는 것이 모노레포 방식에서는 단점이 된다. (호이스팅이 되지 않기 때문에 루트에 패키지를
+  추가했는지는 상관없이 무조건 하위 프로젝트의 의존성을 추가해주어야 하고, 에디터가 typescript나 eslint 등을 찾지 못하는 경우도 있다.)
+
+- pnpm의 content addressable file store 방식이 불필요한 패키지 중복을 막는다. 이러한 특징이 모노레포에서 장점으로
+  적용될 수 있다.
+
+  ❓ 모노레포 : 같은 레포지토리에서 서로 다른 프로젝트들을 관리하는 소프트웨어 개발 전략. (고객센터 페이지와 본 서비스
+  홈페이지가 도메인은 다른데 다수의 동일한 컴포넌트를 사용하기 때문에 레포를 분리하지 않고 monorepo를 도입하는 경우)
+
+<hr />
+
+## 📌참고
+
+- ⭐[[패키지 매니저] npm, yarn, pnpm, yarn-berry](https://velog.io/@seobbang/%ED%8C%A8%ED%82%A4%EC%A7%80-%EB%A7%A4%EB%8B%88%EC%A0%80-npm-yarn-pnpm-yarn-berry)
+- [패키지 매니저의 이해: npm, yarn, pnpm 비교 분석](https://f-lab.kr/insight/understanding-package-managers?gad_source=1&gclid=Cj0KCQjw1qO0BhDwARIsANfnkv8cxPhIZe3g8oElFMc7_4Y4uElT_U7xhSDVdwmwcECqsCNs8lnK_vUaAlF2EALw_wcB)
+- [Yarn-berry 대신 pnpm으로 넘어간 3가지 이유](https://engineering.ab180.co/stories/yarn-to-pnpm)
+- [[PM] 알아보자 Yarn Berry!](https://velog.io/@dev_jiminn/PM-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90-Yarn-Berry)
