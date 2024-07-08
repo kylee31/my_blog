@@ -1,7 +1,7 @@
 ---
-title: 비동기 데이터 통신 SSR로 리팩토링
+title: 비동기 데이터 통신 과정 리팩토링
 date: 2024-02-29
-description: SSR 방식 적용하도록 리팩토링
+description: 데이터 페칭 axios에서 fetch로 리팩토링
 cate: travelplan
 ---
 
@@ -54,47 +54,59 @@ fetch를 Next.js에서 권장하는 이유가 있다. fetch를 사용하면 옵�
 
 ```jsx:▶RecommendTable.jsx
 //수정 전 코드
-    const getData = async () => {
-      await axios
-        .get(requestUrl)
-        .then((res) =>
-          res.data.response.body.items !== null
-            ? (setRecommendData(res.data.response.body.items.item),
-              setIsGetRecommendData(true))
-            : setIsGetRecommendData(false)
-        )
-        .catch((err) => console.log(err));
-    };
+  const getData = async () => {
+    try {
+      const response = await axios.get(requestUrl);
+      if (response.status !== 200) { //fetch 실패
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      if (!response.data.response.body.items) { //falsy(null,undefined,false..)일 경우
+        throw new Error('No items found in the response');
+      }
+      setRecommendData(response.data.response.body.items.item);
+      setIsGetRecommendData(true);
+    } catch (err) {
+      console.error("Error fetching data:", err.message);
+      setIsGetRecommendData(false);
+    }
+  };
 ```
 
 ```jsx:▶RecommendTable.jsx
 //수정 후 코드
 const getData = async () => {
-      await fetch(requestUrl, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-        cache: "no-store",
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Network response was not ok");
-          return res.json();
-        })
-        .then((data) =>
-          data.response.body.items !== null
-            ? (setRecommendData(data.response.body.items.item),
-              setIsGetRecommendData(true))
-            : setIsGetRecommendData(false)
-        )
-        .catch((err) => console.log(err));
-    };
+      try {
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      //cache: "force-cache", default값임을 알아두기
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+
+    if (data.response.body.items !== null) {
+      return data.response.body.items.item;
+    }
+
+    return null; //items가 null인 경우
+  } catch (e) {
+    console.log(e);
+  }
+}
 ```
 
-위와 같이 수정하면 서버 측에서 데이터를 가져와 HTML을 생성한다(SSR). 내 프로젝트 같은 경우
-초기 페이지 로딩에 옵션을 주어 서버 측에서 데이터를 가져와 HTML을 생성하도록 했고, 이후는 클라이언트 측에서
-상호 작용이 일어나 렌더링이 발생하므로 SSR이라고 할 수 있다. 만약 옵션을 \{cache:"force-cache"\}라고 한다면 SSG가 되고,
-fetch 요청 시 클라이언트 측에서 CSR로 렌더링 되어 메인 페이지가 SSG+CSR이 될 것이다.
+위와 같이 수정하면 서버 측에서 데이터를 가져와 HTML을 생성한다(SSR). 현재 해당 코드(내 프로젝트) 같은 경우 검색어를 입력하여
+클라이언트 측에서 렌더링이 발생하기 때문에 현재 데이터 페칭 과정에서는 클라이언트 측에서 매번 검색어가 바뀌며 요청이
+달라지기 때문에 SSR이 효과적이지 않다. React Query 사용으로 캐싱하는 방법을 적용하면 성능을 개선할 수 있을 것 같다.
+
+(해당 기능이 페이지 이동으로 서버 측 html 생성이 아닌, 메인 화면 헤더에서 검색어 입력으로 하위 컴포넌트가 렌더링되는
+클라이언트 측 렌더링이기 때문에 SSR 활용에 적합한 예제는 아니다.)
 
 - SSG: 기본적으로 fetch는 자동으로 데이터를 fetch하고 무제한으로 캐싱한다.
 - SSR: 모든 fetch 요청에서 신선한 데이터를 fetch한다.
@@ -146,7 +158,7 @@ Next.js 13 이후 버전에서 app router 기능을 제공하며 서버 컴포�
 (이전 Next.js 프로젝트에서 axios를 적용한 컴포넌트는 CSR 형태로 클라이언트 측에서 데이터를 fetching하고
 캐싱하고 있었다..!) 이 블로그를 만들며 정확한 개념 정리 및 사용법을 알게 되었고 해당 프로젝트 일부를 리팩토링하게 되었다.
 
-결국 현재 버전을 기준으로 Next.js는 SSR 방식과 RSC로 렌더링 되고있다고 이해하자! 기본적으로 (RSC로 인해) 빌드 시 HTML이 생성되며
+결국 현재 버전을 기준으로 Next.js는 RSC로 SSR 방식으로 렌더링 되고있다고 이해하자! 기본적으로 (RSC로 인해) 빌드 시 HTML이 생성되며
 외부 API를 사용하여 데이터 가져올 때 **페이지 특성(페이지가 자주 업데이트 되어야 하는 데이터를 가지고 있는지,
 정적인 콘텐츠를 담고 있는지)**에 따라 옵션을 설정해주어야 해당 페이지가 SSR, SSG로 구현된다고 할 수 있다.
 (업데이트가 자주 필요하다면 SSR, 정적 콘텐츠는 SSG)
