@@ -30,6 +30,154 @@ Facebook에서 개발한 오픈 소스 프레임워크로, JavaScript와 React�
   ReactNative에서 코드를 작성할 땐, JavaScript와 React Component(Hook 등)를 사용한다. Runtime에서 React Native가 구현한
   코드에 상응하는 안드로이드와 iOS view를 생성한다.
 
+현재 React를 주요 기술 스택으로 사용하기 때문에, Claude에게 TODO 앱 예제를 ReactNative로 작성해달라고 했다.
+프롬프트는 다음과 같았다.
+
+▶ React Native를 배우려고 하는데, 예제로 Todo 애플리케이션을 작성해줘. 코드를 확인하는 사람이 현재 React를 주요 기술
+스택으로 사용하는 주니어 프론트엔드 개발자라는 걸 염두에 두고 코드를 구현해줘.
+
+```js
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+} from "react-native";
+
+const TodoApp = () => {
+  const [todos, setTodos] = useState([]);
+  const [inputText, setInputText] = useState("");
+
+  const addTodo = () => {
+    if (inputText.trim() !== "") {
+      setTodos([
+        ...todos,
+        { id: Date.now(), text: inputText, completed: false },
+      ]);
+      setInputText("");
+    }
+  };
+
+  const toggleTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
+  const removeTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  const renderTodoItem = ({ item }) => (
+    <View style={styles.todoItem}>
+      <TouchableOpacity onPress={() => toggleTodo(item.id)}>
+        <Text style={[styles.todoText, item.completed && styles.completedTodo]}>
+          {item.text}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => removeTodo(item.id)}>
+        <Text style={styles.deleteButton}>삭제</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Todo 리스트</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          value={inputText}
+          onChangeText={setInputText}
+          placeholder="새로운 할 일을 입력하세요"
+        />
+        <TouchableOpacity style={styles.addButton} onPress={addTodo}>
+          <Text style={styles.addButtonText}>추가</Text>
+        </TouchableOpacity>
+      </View>
+      <FlatList
+        data={todos}
+        renderItem={renderTodoItem}
+        keyExtractor={(item) => item.id.toString()}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#f5f5f5",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 10,
+    fontSize: 18,
+    borderRadius: 6,
+  },
+  addButton: {
+    backgroundColor: "#007AFF",
+    padding: 10,
+    borderRadius: 6,
+    marginLeft: 10,
+    justifyContent: "center",
+  },
+  addButtonText: {
+    color: "white",
+    fontSize: 18,
+  },
+  todoItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 6,
+    marginBottom: 10,
+  },
+  todoText: {
+    fontSize: 18,
+  },
+  completedTodo: {
+    textDecorationLine: "line-through",
+    color: "#aaa",
+  },
+  deleteButton: {
+    color: "red",
+    fontSize: 18,
+  },
+});
+
+export default TodoApp;
+```
+
+[💻Claude] 이 코드는 React Native를 사용한 간단한 Todo 애플리케이션입니다.
+React를 사용해 본 개발자라면 구조와 개념이 익숙할 것입니다. 주요 특징은 다음과 같습니다:
+
+1. React Native 컴포넌트 사용: `View`, `Text`, `TextInput`, `TouchableOpacity`, `FlatList` 등 React Native의 기본 컴포넌트를 사용했습니다.
+2. 상태 관리: React의 `useState` 훅을 사용해 상태를 관리합니다.
+3. 스타일링: React Native의 `StyleSheet`를 사용해 스타일을 정의했습니다. 이는 웹의 CSS와 유사하지만 몇 가지 차이점이 있습니다.
+4. 리스트 렌더링: `FlatList`를 사용해 효율적으로 목록을 렌더링합니다. 이는 React Native에서 긴 목록을 처리할 때 주로 사용되는 컴포넌트입니다.
+5. 이벤트 처리: `onPress`, `onChangeText` 등의 이벤트 핸들러를 사용해 사용자 상호작용을 처리합니다.
+   이 예제를 통해 React Native의 기본적인 사용법을 익힐 수 있을 것입니다. React와의 유사점과 차이점을 잘 살펴보시기 바랍니다.
+
 ### Flutter
 
 Google에서 개발한 오픈 소스 UI 프레임워크로, Dart 언어를 기반으로 작성한 하나의 코드베이스로 iOS와 Android 애플리케이션을 개발할 수 있다.

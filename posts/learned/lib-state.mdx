@@ -41,6 +41,61 @@ Generator 문법 사용. Redux-Thunk보다 다양한 함수 및 메소드 기능
 
 Flux 패턴. 저장소 생성 함수 create와 상태 업데이트 수행 함수 set으로 구성. 유연한 데이터 흐름. 미들웨어 없이 비동기 처리 가능.
 
+```js
+import { create } from "zustand";
+
+const useStore = create((set) => ({
+  count: 1,
+  inc: () => set((state) => ({ count: state.count + 1 })),
+}));
+
+function Counter() {
+  const { count, inc } = useStore();
+  return (
+    <div>
+      <span>{count}</span>
+      <button onClick={inc}>one up</button>
+    </div>
+  );
+}
+```
+
+- set 함수
+
+  1. 직접 새 상태 객체를 전달받는 형태
+
+  ```js
+  (set) => ({
+    count: 0,
+    setCount: (newCount) => set({ count: newCount }),
+  });
+  ```
+
+  2. 현재 상태를 참조하여 상태를 업데이트하는 형태
+
+  ```js
+  (set) => ({
+    count: 0,
+    setIncreaseCount: () =>
+      set((state) => {
+        count: state.count + 1;
+      }),
+  });
+  ```
+
+➕
+
+- 암시적 반환, 명시적 반환 (화살표 함수)
+  ()=({}), ()=>{return}
+
+- 객체 리터럴
+  ```js
+  {
+    //현재 상태 count에 +1을 더한 값을 count에 할당
+    count: state.count + 1;
+  }
+  ```
+
 <hr />
 
 ## 📌참고
