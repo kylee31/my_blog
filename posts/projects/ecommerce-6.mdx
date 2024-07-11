@@ -8,7 +8,9 @@ cate: ecommerce
 > 프로젝트에 사용되어 rollup 옵션으로 chunk를 분리한 빌드 도구 Vite와 이에 기반한 테스트 도구 Vitest에 대해 알아보자.
 
 먼저 Vite란 Vue.js의 창시자인 Evan You가 작성하고 Vue 및 React 프로젝트 템플릿에 기본적으로 사용되는 로컬 개발
-서버(빌드 도구)이다. TypeScript 및 JSX를 지원하며 번들링을 위해 내부적으로 Rollup과 esbuild를 사용한다.
+서버(빌드 도구)이다. TypeScript 및 JSX를 지원하며 번들링을 위해 내부적으로 옵션 Rollup과 esbuild를 사용한다.
+
+- [롤업과 웹팩의 차이점](https://yoon-dumbo.tistory.com/entry/%EB%A1%A4%EC%97%85%EA%B3%BC-%EC%9B%B9%ED%8C%A9%EC%9D%98-%EC%B0%A8%EC%9D%B4%EC%A0%90-rollup-vs-webpack)
 
 번들러란, 여러 개로 모듈화된 자바스크립트 파일을 하나로 합치는 즉, 'bundle' 해주는 도구이다. 브라우저는 모듈화된
 자바스크립트는 읽지 못하기 때문에 이러한 과정이 필요하다. Webpack이 가장 대중적인 번들러로 사용되고 있다.
@@ -17,7 +19,86 @@ cate: ecommerce
 
 [Vite를 사용해야 하는 이유](https://ko.vitejs.dev/guide/why)
 
+## Vitest
+
+Vite를 사용하고 있어 Vitest를 설치하였다. 이후 package.json과 vite.config.ts에 test 관련 설정 완료.
+
+```
+//package.json
+
+"scripts": {
+    //...
+    "test":"vitest",
+    "test:run": "vitest run"
+},
+```
+
+```
+//vite.config.ts
+/// <reference types="vitest" />
+export default defineConfig({
+  test: {
+    include: ["src/__tests__/*/*.test.ts?(x)"],
+    globals: true,
+    //environment: "jsdom",
+  },
+});
+
+```
+
+간단한 테스트 코드 바로 작성하여 단위 테스트 코드를 작성해보았다. util 함수에 대한 파일을 생성하였다. 이중 리팩토링 하게 된
+유틸 함수 코드에 대해 정리해보자.
+
+### (util 함수) 단위 테스트
+
+원래 아래의 코드는 document.title을 직접 변경하는 로직으로 작성되어 있었다. 그러나 테스트 코드를 작성하면서 순수 함수
+기준에 어긋하는 부분이 존재함을 발견했다.
+
+**순수함수**
+
+1. 동일한 입력에 대해 항상 동일한 출력을 반환해야 한다.
+2. 외부 상태를 변경하지 않아야 한다 (부수 효과(side effect)가 없어야 한다).
+
+document 상태를 바꾸는 side effect가 두번째 조건에 어긋나는 것이었다. 따라서 아래의 로직으로 코드를 변경했다.
+
+```
+// src/util/changePathname.ts
+import { ProductCategory } from "@/services/data/ProductData";
+
+const changePathname = (pathname: string) => {
+  const path = pathname.split("/");
+  const idx = path.length - 1;
+  const decodingPathName = decodeURI(path[idx]);
+  let locName = decodingPathName == "" ? "home" : decodingPathName;
+
+  if (path[2] === "edit-product") {
+    locName = "edit-product";
+  }
+  if (path[2] === "update-product") {
+    locName = "update-product";
+  }
+  if (ProductCategory.includes(decodeURI(path[2]))) {
+    locName = decodeURI(path[2]);
+  }
+  return `${locName} | Logo`;
+};
+
+export default changePathname;
+```
+
+```
+//util.test.ts
+test("change path name", () => {
+  expect(
+    changePathname("https://e-commerce-f517b.web.app/category/홈리빙")
+  ).toBe("홈리빙 | Logo");
+});
+```
+
+npm run test는 변경사항을 관찰하여 test 결과를 바로 반환해준다. (npm run test:run은 한번만 실행, CI에 효율적)
+
 ## 📌참고
 
 - [Vitest.dev 공식문서](https://vitest.dev/)
 - [Vitest 처음 시작하기](https://www.daleseo.com/vitest/)
+- [Example of Unit Test, Integration Test, E2E Test and in Frontend Testing](https://medium.com/@leovoon/example-of-unit-test-integration-test-e2e-test-and-in-frontend-testing-673c901b3ff9)
