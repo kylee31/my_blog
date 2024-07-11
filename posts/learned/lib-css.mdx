@@ -1,0 +1,122 @@
+---
+title: Library, CSS 프레임워크
+date: 2024-07-11
+description: CSS 기본 개념, CSS 프레임워크 종류(CSS-in-JS, CSS 전처리기, Utility-First CSS)
+---
+
+> CSS 기본 개념과 특징을 정리하고, CSS 프레임워크 종류(CSS-in-JS, CSS 전처리기, Utility-First CSS)에 대해 알아보자.
+
+최근 React에 몰두하여 CSS에 소홀한 기분이 들었다. 다시 한번 복기할 겸 이전에 노트에 정리해둔 CSS를 블로그 게시글로
+옮기며 내용을 추가해보자.
+
+### CSS (Cascading Style Sheet)
+
+폭포수 스타일 시트. HTML에 스타일을 적용할 수 있는 코드. 상위에서 하위로 흐르는 **폭포수**같은 스타일 적용 규칙을 가지고
+있다. 2가지 원칙을 통해 스타일 적용 결정이 이뤄진다.
+
+1. 스타일 우선순위 (중요도, 명시도, 코드순서)
+
+   - 중요도 : 선언된 위치(사람)에 따라 적용 (작성자(author), 사용자(user), 사용자 도구(user agent, 브라우저가 대표적))
+     작성자 스타일 시트 > 사용자 스타일 시트 > 사용자 도구 스타일 시트
+
+     ```css
+     //속성의 중요도를 올리고 싶다면 !important 붙이기
+
+     셀렉터 {
+       속성: 속성값 !important;
+     }
+     ```
+
+   - 명시도 : 인라인 > id > class > 태그 (셀렉터 범위가 세부적일 수록 우선순위가 높음)
+
+   ```
+   //React, Tailwind CSS 예제
+
+   <div className="text-red-500">
+       parent {/*red-500으로 텍스트 색상 지정*/}
+       <div className="text-blue-500">
+           child {/*blue-500으로 텍스트 색상 지정*/}
+       </div>
+   </div>
+   ```
+
+   CSS의 특정 속성에는 상속이라는 특징이 있지만 명시적 지정 우선 원칙(specificity)에 따라 자기 자신의 요소에 적용된
+   속성을 따른다. (더욱 세부적인 범위라고 생각하면 편하다)
+
+   - 코드순서 : 가장 마지막에 작성된 속성이 적용된다. (동일한 요소에 같은 속성 값이 지정된다면, 마지막에 작성된 속성이 적용됨)
+
+2. 스타일 상속
+   부모 요소 스타일을 자식 요소가 따라간다. 모든 CSS 속성이 상속되는 것이 아니라, 상속되는 속성의 종류가 있다.
+   (ex. 텍스트 관련 속성-color, font-family, font-size, font-weight .., 목록 관련 속성-list-style, list-style-type .. 등)
+
+   ❗ [헷갈릴 수 있는 사항] background-color는 상속 요소가 아님. 배경색이 정해지지 않으면 투명하게 보여서 헷갈릴 수 있는데, 투명해서 뒷배경 색이
+   보이는 것일 뿐 상속이 아니라는 거 기억하기.
+
+   - [inheritance properties, non-inheritance properites](https://www.codecademy.com/resources/docs/css/inheritance)
+   - [Inheritance-mdn](https://developer.mozilla.org/en-US/docs/Web/CSS/Inheritance)
+
+✔ [CSS 란?](https://webclub.tistory.com/505)
+
+### CSS 프레임워크
+
+CSS는 inline 방식으로 작성되거나 id/class 속성 값, 태그로 style sheet에서 작성하였다. CSS를 관리하고 새로운 name을 정하기
+복잡해지는 단점이 존재한다. 이를 보완하여 다양한 특징을 가진 CSS 프레임워크가 등장했다.
+
+#### CSS 전처리기 (ex. SASS, SCSS ..)
+
+CSS와 유사하지만, 중첩, 조건문, 반복문 등의 기능을 제공하며 효율적으로 작성할 수 있도록 도와준다. 소스 코드를 작성한 후 컴파일
+단계에서 실행되어 최종 CSS 파일로 변환된다.
+
+#### CSS-in-JS (ex. Styled-Components, Emotion)
+
+JS나 다른 언어를 사용하여 동적으로 CSS를 생성하거나 조작한다. 이러한 특징 때문에 주로 CSS를 동적으로 생성해야 할 때 사용한다.
+JavaScript 코드가 실행될 때 CSS가 함께 해석되어 적용된다.
+
+#### Utility-First CSS (ex. Tailwind CSS)
+
+CSS를 쉽게 적용할 수 있도록 미리 정의된 유틸리티 클래스를 사용하여 클래스 기반의 인라인 스타일링을 수행한다.
+커스터마이징이 가능하다.
+
+➕ 컴포넌트 기반 프레임워크 (ex. Bootstrap, Material UI, Shadcn/ui)
+
+미리 정의된 컴포넌트와 레이아웃 시스템을 제공하여 빠르게 반응형 웹사이트와 애플리케이션을 만들 수 있도록 돕는다.
+
+✔ UI 컴포넌트의 개발, 테스트, 문서화 도구 (StoryBook)
+
+UI 컴포넌트를 개발, 테스트 및 문서화하는 데 사용하는 개발 도구입니다. Storybook을 사용하면 컴포넌트를 독립적으로
+생성하고, 서로 다른 상태와 변형을 시각화할 수 있다. 이를 통해 개발자와 디자이너는 컴포넌트의 다양한 모습을 쉽게 확인하고
+피드백을 주고받을 수 있다.
+
+<hr />
+
+### Tailwind CSS
+
+CSS를 쉽게 적용할 수 있도록 미리 정의된 유틸리티 클래스를 사용하여 클래스 기반의 인라인 스타일링을 수행한다.
+커스터마이징이 가능하다.
+
+```
+<div className="w-72 h-24 bg-red-50 color-blue">
+    parent
+    <div className="m-5 border-2">
+        clild
+    </div>
+</div>
+```
+
+✔ [tailwind css 똑똑하게 사용하기](https://leesangwondev.vercel.app/tailwind-css-%EB%98%91%EB%98%91%ED%95%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
+
+▶ @layer를 사용하여 base, components, util로 구분하여 커스텀 CSS를 생성할 수 있다. @layer 문을 사용하면 선언 순서를
+제어하고 특정 클래스를 추가하여 사용할 수 있으며 빌드 시 크기를 줄이기 위해 선언되지 않은 유틸리티 클래스는 제거된다.
+
+- [Tailwind CSS 사용기 - kakao FE 기술블로그](https://fe-developers.kakaoent.com/2022/220303-tailwind-tips/)
+- [TailwindCSS - document](https://tailwindcss.com/docs/installation)
+- [TailwindCSS - Functions & Directives](https://tailwindcss.com/docs/functions-and-directives)
+
+<hr />
+
+## 📌참고
+
+- [[CSS] Cascading](https://velog.io/@bami/CSS-Cascading)
+- [🎨 CSS 속성 상속 개념 & 적용 우선순위](https://inpa.tistory.com/entry/CSS-%F0%9F%93%9A-%EC%83%81%EC%86%8D-%EA%B0%9C%EB%85%90-%EC%A0%81%EC%9A%A9-%EC%9A%B0%EC%84%A0%EC%88%9C%EC%9C%84#%EC%83%81%EC%86%8D%ED%95%98%EB%8A%94_%EC%86%8D%EC%84%B1)
+- [[Tailwind CSS] Utility-First CSS를 써야하는 이유 - 1탄](https://velog.io/@yeonsubaek/Tailwind-CSS-Utility-First-CSS%EB%A5%BC-%EC%8D%A8%EC%95%BC%ED%95%98%EB%8A%94-%EC%9D%B4%EC%9C%A0-1%ED%83%84)
+- [[번역] Tailwind CSS에서 혼란을 방지하기 위한 5가지 모범 사례](https://velog.io/@lky5697/5-best-practices-for-preventing-chaos-in-tailwind-css)
