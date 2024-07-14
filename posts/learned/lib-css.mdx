@@ -103,10 +103,71 @@ CSS를 쉽게 적용할 수 있도록 미리 정의된 유틸리티 클래스를
 </div>
 ```
 
+Tailwind CSS는 빌드 시점에 컴파일된다. 프로젝트의 빌드 툴(예: Webpack, Parcel, Vite 등)을 통해 개발자가 정의한 스타일을
+기반으로 사용되지 않는 CSS를 제거(Purge)하여 최종 CSS 파일을 생성한다. 최종 생성된 CSS 파일은 최적화되어 브라우저에 로드된다.
+
+**+** 개발 관점에서 Tailwind CSS 모드 설정
+
+빌드 시점에 컴파일 되는 것이 기본이지만 JIT(Just-In-Time) 모드를 설정하면 런타임 시점에서 생성할 수 있다. 이러한 모드는
+JIT 모드는 개발 중에 파일이 저장될 때마다 필요한 스타일을 즉시 생성한다. JIT 모드는 실제로 사용되는 클래스만 포함된 CSS
+파일을 생성하기 때문에, 최종 빌드된 CSS 파일의 크기를 크게 줄일 수 있다. (초기 빌드 시간 단축)
+
+```
+// package.json
+{
+  "scripts": {
+    "build:dev": "NODE_ENV=development tailwindcss -c tailwind.config.dev.js -o build/dev.css",
+    "build:prod": "NODE_ENV=production tailwindcss -c tailwind.config.prod.js -o build/prod.css"
+  }
+}
+```
+
 ✔ [tailwind css 똑똑하게 사용하기](https://leesangwondev.vercel.app/tailwind-css-%EB%98%91%EB%98%91%ED%95%98%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
 
-▶ @layer를 사용하여 base, components, util로 구분하여 커스텀 CSS를 생성할 수 있다. @layer 문을 사용하면 선언 순서를
-제어하고 특정 클래스를 추가하여 사용할 수 있으며 빌드 시 크기를 줄이기 위해 선언되지 않은 유틸리티 클래스는 제거된다.
+✅ Tailwind CSS 커스텀 스타일
+: Tailwind에서 제공하는 지시어를 사용하여 커스터마이징이 가능하다. (@tailwind, @layer, @apply)
+
+- @tailwind
+  해당 지시어를 사용하여 base, components, utilities, variants 스타일 CSS에 삽입 가능
+
+  1. @layer
+     @layer 문을 사용하면 선언 순서 제어, 특정 클래스 추가가 가능. 빌드 시 크기를 줄이기 위해 선언되지 않은 유틸리티 클래스를 제거함
+
+     ```css
+     @tailwind base;
+     @tailwind components;
+     @tailwind utilities;
+
+     @layer base {
+       /*특정 요소(h1, div 등)에 대한 기본 스타일*/
+     }
+
+     @layer components {
+       /*재사용성이 높은 컴포넌트(btn, card 등)에 대한 스타일*/
+     }
+
+     @layer utilities {
+       /*tailwind가 제공하지 않는 유틸리티 클래스 커스텀*/
+     }
+     ```
+
+  2. @apply
+     @apply는 기존 유틸리티 클래스를 커스텀 CSS에 추가할 수 있음
+
+     ```css
+     @tailwind base;
+     @tailwind components;
+     @tailwind utilities;
+
+     @layer components {
+       .my-custom-style {
+         @apply text-red-100 text-2xl;
+       }
+     }
+     ```
+
+  ✔ [tailwindcss, adding custom styles](https://tailwindcss.com/docs/adding-custom-styles#using-css-and-layer) <br/>
+  ✔ [Tailwind-CSS의 지시어 tailwind-layer-apply에 대해 이해해보자](https://fay-story.com/entry/Tailwind-CSS-Tailwind-CSS%EC%9D%98-%EC%A7%80%EC%8B%9C%EC%96%B4-tailwind-layer-apply%EC%97%90-%EB%8C%80%ED%95%B4-%EC%9D%B4%ED%95%B4%ED%95%B4%EB%B3%B4%EC%9E%90)
 
 - [Tailwind CSS 사용기 - kakao FE 기술블로그](https://fe-developers.kakaoent.com/2022/220303-tailwind-tips/)
 - [TailwindCSS - document](https://tailwindcss.com/docs/installation)
