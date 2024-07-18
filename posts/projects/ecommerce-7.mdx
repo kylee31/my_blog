@@ -1,0 +1,74 @@
+---
+title: 상품 이미지 리사이징 저장
+date: 2024-07-18
+description: 라이브러리를 사용한 클라이언트 측 이미지 리사이징, Store 저장
+cate: ecommerce
+---
+
+> 질문을 주셨고 너무 자신있던 내용인데 해당 내용을 포트폴리오에만 정리해두고 블로그에 옮겨두지 않아서 자세한 내용을
+> 잊고 있었다..ㅜㅜ 그냥 망!햇당 다음 면접이나 열심히 준비하자..😇
+
+👩‍💻 이전 [React 활용 초기 프로젝트](/projects/moviediary)에서 localstorage에 저장하면서 이미지 리소스가 큰 비중을 차지한다는
+사실을 체감하였다.
+
+✔ 관련 정리글 : [movie-diary이미지 리사이징 라이브러리 적용](/projects/moviediary/moviediary-1)
+
+해당 프로젝트에서는 Canvas API를 사용하여 다시 그리는 로직으로 구현. 이후 라이브러리를 사용하여 리팩토링 진행.
+(라이브러리를 사용한 이유 : 성능 최적화와 로직 단순화를 위해)
+
+1. browser-image-compression (최대 용량 설정)
+2. react-image-file-resizer (최대 크기 설정)
+
+마찬가지로 상품 등록 시 이미지를 리사이징하였다. 동일한 더미 데이터(이미지)를 등록하여 테스트 한 결과 54kb에서 28kb로 줄일 수 있었다.
+이 프로젝트에서 이미지를 용량으로 기준하여 줄일 경우, 화질 차이가 발생할 것 같아 등록하는 이미지를 기준으로 품질을 줄이도록
+설정하였다.
+
+▶ 즉 1번 라이브러리를 최대 30kb로 설정하면 100kb, 50kb는 30kb로 줄어든다(정확히 30kb는 아니고, 최대한 가깝게). 다르게
+2번 라이브러리를 최대 크기로 설정하면 크기에 맞도록 넓이, 높이가 줄어드는 것.
+
+위와 같은 이유로 2번 라이브러리를 선택하여 상품 이미지 태그(image) 넓이, 높이에서 초과된다면 리사이징하는 로직을 추가하였다.
+
+```js
+import imageCompression from "browser-image-compression";
+
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: 0.03, // 최대 크기 (30KB)
+    useWebWorker: true,
+  };
+
+  try {
+    const compressedFile = await imageCompression(file, options);
+    console.log("압축된 파일 크기:", compressedFile.size); // 크기 확인
+    return compressedFile;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+...
+```
+
+```js
+import Resizer from "react-image-file-resizer";
+
+const resizeImage = (file) => {
+  Resizer.imageFileResizer(
+    file,
+    maxWidth, // 최대 너비 (ex. 800)
+    maxHeight, // 최대 높이 (ex. 700)
+    "JPEG", // 포맷
+    90, // 품질
+    0, // 회전
+    (uri) => {
+      console.log(uri);
+      // 조정된 이미지 처리 (예: 업로드 또는 표시)
+    },
+    "base64" // 출력 유형
+  );
+};
+
+...
+```
+
+(2가지 라이브러리를 사용하는 예제)
